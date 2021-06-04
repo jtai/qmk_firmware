@@ -15,17 +15,11 @@
  */
 #include QMK_KEYBOARD_H
 
-#define TD_CAPS TD(TD_FN_CAPS)
-
-enum {
-  TD_FN_CAPS,
-};
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [0] = LAYOUT_65_ansi( /* Base */
     KC_GESC, KC_1,    KC_2,    KC_3,    KC_4,   KC_5,     KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC, KC_HOME,\
     KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,   KC_T,     KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS, KC_END,\
-    TD_CAPS, KC_A,    KC_S,    KC_D,    KC_F,   KC_G,     KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,  KC_PGUP,\
+    MO(1),   KC_A,    KC_S,    KC_D,    KC_F,   KC_G,     KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,  KC_PGUP,\
     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,   KC_B,     KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,          KC_UP,   KC_PGDN, \
     KC_LCTL, KC_LGUI, KC_LALT,                KC_SPC,                                KC_RALT, MO(2),   KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT),
 
@@ -36,10 +30,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRNS, KC_TRNS, KC_TRNS, KC_VOLD, KC_VOLU, KC_MUTE, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS, KC_PAUS,\
     KC_TRNS, KC_TRNS, KC_TRNS,                KC_TRNS,                               KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
 
-[2] = LAYOUT_65_ansi( /* LED control, RESET */
+[2] = LAYOUT_65_ansi( /* LED control, RESET, Caps lock */
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, EF_DEC,  EF_INC,  KC_TRNS, KC_TRNS,\
     KC_TRNS, H2_DEC,  H2_INC,  S2_DEC,  S2_INC,  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, RESET,   KC_TRNS,\
-    KC_TRNS, H1_DEC,  H1_INC,  S1_DEC,  S1_INC,  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS, KC_TRNS,\
+    KC_CAPS, H1_DEC,  H1_INC,  S1_DEC,  S1_INC,  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS, KC_TRNS,\
     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          BR_INC,  KC_TRNS,\
     KC_TRNS, KC_TRNS, KC_TRNS,                KC_TRNS,                               KC_TRNS, KC_TRNS, KC_TRNS, ES_DEC,  BR_DEC,  ES_INC),
 };
@@ -111,29 +105,3 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // Not a grave keycode so continue processing
     return true;
 }
-
-/* Caps Lock should act as MO(1) when pressed once and held; as regular Caps Lock when pressed twice
- *
- * See https://www.reddit.com/r/olkb/comments/8i3zq9/qmk_tap_dance_and_momentary_layer_switch/dyzavhu/
- */
-void td_fn_caps_finished(qk_tap_dance_state_t *state, void *user_data)
-{
-    if (state->count == 1) {
-        layer_on(1);
-    } else {
-        register_code(KC_CAPS);
-    }
-}
-
-void td_fn_caps_reset(qk_tap_dance_state_t *state, void *user_data)
-{
-    if (state->count == 1) {
-        layer_off(1);
-    } else {
-        unregister_code(KC_CAPS);
-    }
-}
-
-qk_tap_dance_action_t tap_dance_actions[] = {
-    [TD_FN_CAPS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_fn_caps_finished, td_fn_caps_reset),
-};
