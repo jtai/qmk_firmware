@@ -37,19 +37,23 @@
       "a": 4
     },
     "Q",
-    "W",
     {
-      "t": "#ffffff",
+      "t": "#ffffff"
+    },
+    "Alt+W",
+    {
       "a": 6,
       "f": 2
     },
-    "<i class='fa fa-backward'></i>",
     "<i class='fa fa-forward'></i>",
     "<i class='fa fa-play'></i><i class='fa fa-pause'></i>",
     {
-      "t": "#727474",
       "a": 4,
       "f": 3
+    },
+    "Alt+T",
+    {
+      "t": "#727474"
     },
     "Y",
     "U",
