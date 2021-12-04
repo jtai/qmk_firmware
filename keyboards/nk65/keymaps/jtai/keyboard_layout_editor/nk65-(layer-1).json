@@ -42,15 +42,13 @@
     },
     "Alt+W",
     {
-      "a": 6,
-      "f": 2
+      "t": "#727474"
     },
-    "<i class='fa fa-forward'></i>",
-    "<i class='fa fa-play'></i><i class='fa fa-pause'></i>",
+    "E",
     {
-      "a": 4,
-      "f": 3
+      "t": "#ffffff"
     },
+    "Alt+R",
     "Alt+T",
     {
       "t": "#727474"
@@ -95,8 +93,20 @@
     "A",
     "S",
     "D",
-    "F",
-    "G",
+    {
+      "t": "#ffffff",
+      "a": 6,
+      "f": 2
+    },
+    "<i class='fa fa-play'></i><i class='fa fa-pause'></i>",
+    {
+      "f": 3
+    },
+    "<i class='fa fa-forward'></i>",
+    {
+      "t": "#727474",
+      "a": 4
+    },
     "H",
     {
       "t": "#ffffff",
