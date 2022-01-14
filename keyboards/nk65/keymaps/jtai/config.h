@@ -1,3 +1,6 @@
+// options
+#define IGNORE_MOD_TAP_INTERRUPT
+
 // the default brightness
 #undef RGB_BACKLIGHT_BRIGHTNESS
 #define RGB_BACKLIGHT_BRIGHTNESS 77
