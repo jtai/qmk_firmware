@@ -3,6 +3,7 @@
 #define _QWERTY 0
 #define _NAV 1
 #define _FN 2
+#define _SYSTEM 3
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -46,21 +47,39 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
                                     _______, _______, _______,                   _______, _______, _______
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
+  ),
+
+  [_SYSTEM] = LAYOUT(
+  //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
+     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
+     XXXXXXX, XXXXXXX, XXXXXXX, EEP_RST, RESET,   XXXXXXX,                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
+     XXXXXXX, XXXXXXX, XXXXXXX, DEBUG,   XXXXXXX, XXXXXXX,                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          XXXXXXX, NK_TOGG, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
+                                    _______, XXXXXXX, XXXXXXX,                   _______, XXXXXXX, XXXXXXX
+                                // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   )
 };
 
-/* true if the last press of GRAVE_ESC was shifted (i.e. ALT or SHIFT were pressed), false otherwise.
- * Used to ensure that the correct keycode is released if the key is released.
- */
+// true if the last press of GRAVE_ESC was shifted (i.e. ALT or SHIFT were pressed), false otherwise.
+// Used to ensure that the correct keycode is released if the key is released.
 static bool grave_esc_was_shifted = false;
 
+// true if the named GUI modifier was pressed but not yet released.
+// Used to detect when both GUI modifiers are held simultaneously.
+static bool left_gui_held = false;
+static bool right_gui_held = false;
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // Copied from quantum/process_keycode/process_grave_esc.c, except consider GRAVE_ESC shifted if
+    // Adapted from quantum/process_keycode/process_grave_esc.c, except consider GRAVE_ESC shifted if
     // ALT is pressed (instead of GUI) to accommodate a physical Windows-style keyboard layout (CTRL, GUI, ALT)
     // with GUI and ALT swapped in macOS.
     if (keycode == GRAVE_ESC) {
-        const uint8_t mods    = get_mods();
-        uint8_t       shifted = mods & MOD_MASK_SA;
+        const uint8_t mods = get_mods();
+        uint8_t shifted = mods & MOD_MASK_SA;
 
         if (record->event.pressed) {
             grave_esc_was_shifted = shifted;
@@ -68,15 +87,39 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         } else {
             del_key(grave_esc_was_shifted ? KC_GRAVE : KC_ESCAPE);
         }
-
         send_keyboard_report();
         return false;
+    }
+
+    switch (keycode) {
+        // Activate the _SYSTEM layer as a one-shot layer if both GUI keys are held simultaneously
+        case KC_LGUI:
+            if (right_gui_held) {
+                if (record->event.pressed) {
+                    set_oneshot_layer(_SYSTEM, ONESHOT_START);
+                } else {
+                    clear_oneshot_layer_state(ONESHOT_PRESSED);
+                }
+            }
+            left_gui_held = record->event.pressed;
+            break;
+
+        case KC_RGUI:
+            if (left_gui_held) {
+                if (record->event.pressed) {
+                    set_oneshot_layer(_SYSTEM, ONESHOT_START);
+                } else {
+                    clear_oneshot_layer_state(ONESHOT_PRESSED);
+                }
+            }
+            right_gui_held = record->event.pressed;
+            break;
     }
 
     return true;
 }
 
-// RGB indicators for toggled nav layer and caps lock
+// RGB indicators for caps lock and toggled/one-shot layers
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (layer_state_is(_NAV)) {
         RGB_MATRIX_INDICATOR_SET_COLOR(27, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
@@ -84,6 +127,14 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
     if (host_keyboard_led_state().caps_lock) {
         RGB_MATRIX_INDICATOR_SET_COLOR(58, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
+    }
+
+    if (layer_state_is(_SYSTEM)) {
+        for (uint8_t i = led_min; i <= led_max; i++) {
+            if (g_led_config.flags[i] & LED_FLAG_UNDERGLOW) {
+                rgb_matrix_set_color(i, RGB_MATRIX_MAXIMUM_BRIGHTNESS, 0, 0);
+            }
+        }
     }
 }
 

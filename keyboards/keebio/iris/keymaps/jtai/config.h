@@ -20,5 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #define USE_I2C
 #define EE_HANDS
 
-// required for caps lock RGB indicator
+// required for caps lock and toggled/one-shot layer RGB indicators
 #define SPLIT_LED_STATE_ENABLE
+#define SPLIT_LAYER_STATE_ENABLE
