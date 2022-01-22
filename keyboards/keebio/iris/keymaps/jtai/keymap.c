@@ -3,7 +3,6 @@
 #define _QWERTY 0
 #define _NAV 1
 #define _FN 2
-#define _SYSTEM 3
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -47,31 +46,47 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
                                     _______, _______, _______,                   _______, _______, _______
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
-  ),
-
-  [_SYSTEM] = LAYOUT(
-  //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
-     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     XXXXXXX, XXXXXXX, XXXXXXX, EEP_RST, RESET,   XXXXXXX,                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     XXXXXXX, XXXXXXX, XXXXXXX, DEBUG,   XXXXXXX, XXXXXXX,                            XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          XXXXXXX, NK_TOGG, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
-                                    _______, XXXXXXX, XXXXXXX,                   _______, XXXXXXX, XXXXXXX
-                                // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   )
 };
+
+enum combos {
+    DF_ESC,
+    MAGIC_R_RESET,
+    MAGIC_E_EEP_RST,
+    MAGIC_D_DEBUG,
+    MAGIC_N_NK_TOGG,
+};
+
+const uint16_t PROGMEM df_combo[]      = {KC_D, KC_F, COMBO_END};
+const uint16_t PROGMEM magic_r_combo[] = {KC_LGUI, KC_CAPS, KC_R, COMBO_END};
+const uint16_t PROGMEM magic_e_combo[] = {KC_LGUI, KC_CAPS, KC_E, COMBO_END};
+const uint16_t PROGMEM magic_d_combo[] = {KC_LGUI, KC_CAPS, KC_D, COMBO_END};
+const uint16_t PROGMEM magic_n_combo[] = {KC_LGUI, KC_CAPS, KC_N, COMBO_END};
+
+combo_t key_combos[COMBO_COUNT] = {
+    [DF_ESC]          = COMBO(df_combo,      KC_ESC),
+    [MAGIC_R_RESET]   = COMBO(magic_r_combo, RESET),
+    [MAGIC_E_EEP_RST] = COMBO(magic_e_combo, EEP_RST),
+    [MAGIC_D_DEBUG]   = COMBO(magic_d_combo, DEBUG),
+    [MAGIC_N_NK_TOGG] = COMBO(magic_n_combo, NK_TOGG),
+};
+
+uint16_t get_combo_term(uint16_t index, combo_t *combo) {
+    switch (index) {
+        // home row combo keys are typically pressed within 10ms of each other
+        // default 50ms COMBO_TERM risks accidental triggering (e.g., vim sequences)
+        case DF_ESC:
+            return 15;
+        default:
+            return COMBO_TERM;
+    }
+}
 
 // true if the last press of GRAVE_ESC was shifted (i.e. ALT or SHIFT were pressed), false otherwise.
 // Used to ensure that the correct keycode is released if the key is released.
 static bool grave_esc_was_shifted = false;
 
-// true if the named GUI modifier was pressed but not yet released.
-// Used to detect when both GUI modifiers are held simultaneously.
-static bool left_gui_held = false;
-static bool right_gui_held = false;
+extern void rgb_matrix_update_pwm_buffers(void);
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // Adapted from quantum/process_keycode/process_grave_esc.c, except consider GRAVE_ESC shifted if
@@ -91,29 +106,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
     }
 
-    switch (keycode) {
-        // Activate the _SYSTEM layer as a one-shot layer if both GUI keys are held simultaneously
-        case KC_LGUI:
-            if (right_gui_held) {
-                if (record->event.pressed) {
-                    set_oneshot_layer(_SYSTEM, ONESHOT_START);
-                } else {
-                    clear_oneshot_layer_state(ONESHOT_PRESSED);
-                }
-            }
-            left_gui_held = record->event.pressed;
-            break;
-
-        case KC_RGUI:
-            if (left_gui_held) {
-                if (record->event.pressed) {
-                    set_oneshot_layer(_SYSTEM, ONESHOT_START);
-                } else {
-                    clear_oneshot_layer_state(ONESHOT_PRESSED);
-                }
-            }
-            right_gui_held = record->event.pressed;
-            break;
+    // Activate underglow LEDs to indicate we're in bootloader mode
+    if (keycode == RESET) {
+         for (uint8_t i = 0; i < DRIVER_LED_TOTAL; i++) {
+             if (g_led_config.flags[i] & LED_FLAG_UNDERGLOW) {
+                 rgb_matrix_set_color(i, RGB_MATRIX_MAXIMUM_BRIGHTNESS, 0, 0);
+             }
+         }
+         rgb_matrix_update_pwm_buffers();
+         return true;
     }
 
     return true;
@@ -127,14 +128,6 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
     if (host_keyboard_led_state().caps_lock) {
         RGB_MATRIX_INDICATOR_SET_COLOR(58, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
-    }
-
-    if (layer_state_is(_SYSTEM)) {
-        for (uint8_t i = led_min; i <= led_max; i++) {
-            if (g_led_config.flags[i] & LED_FLAG_UNDERGLOW) {
-                rgb_matrix_set_color(i, RGB_MATRIX_MAXIMUM_BRIGHTNESS, 0, 0);
-            }
-        }
     }
 }
 
