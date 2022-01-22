@@ -105,7 +105,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 
     // Activate LEDs to indicate we're in bootloader mode
-    // TODO: create custom effect to limit this to underglow LEDs
     if (keycode == RESET) {
         if (record->event.pressed) {
             rgb_matrix_sethsv_noeeprom(HSV_RED);
@@ -132,6 +131,6 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 // Must enable RGB matrix for indicators to work
 // See https://docs.qmk.fm/#/feature_rgb_matrix?id=indicators-without-rgb-matrix-effect
 void keyboard_post_init_user(void) {
-    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_SOLID_COLOR_UNDERGLOW);
     rgb_matrix_sethsv_noeeprom(HSV_OFF);
 }
