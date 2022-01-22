@@ -86,8 +86,6 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
 // Used to ensure that the correct keycode is released if the key is released.
 static bool grave_esc_was_shifted = false;
 
-extern void rgb_matrix_update_pwm_buffers(void);
-
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // Adapted from quantum/process_keycode/process_grave_esc.c, except consider GRAVE_ESC shifted if
     // ALT is pressed (instead of GUI) to accommodate a physical Windows-style keyboard layout (CTRL, GUI, ALT)
@@ -106,15 +104,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
     }
 
-    // Activate underglow LEDs to indicate we're in bootloader mode
+    // Activate LEDs to indicate we're in bootloader mode
+    // TODO: create custom effect to limit this to underglow LEDs
     if (keycode == RESET) {
-         for (uint8_t i = 0; i < DRIVER_LED_TOTAL; i++) {
-             if (g_led_config.flags[i] & LED_FLAG_UNDERGLOW) {
-                 rgb_matrix_set_color(i, RGB_MATRIX_MAXIMUM_BRIGHTNESS, 0, 0);
-             }
-         }
-         rgb_matrix_update_pwm_buffers();
-         return true;
+        if (record->event.pressed) {
+            rgb_matrix_sethsv_noeeprom(HSV_RED);
+        } else {
+            reset_keyboard();
+        }
+        return false;
     }
 
     return true;
