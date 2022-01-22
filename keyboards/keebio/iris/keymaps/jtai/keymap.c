@@ -73,8 +73,8 @@ combo_t key_combos[COMBO_COUNT] = {
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
-        // home row combo keys are typically pressed within 10ms of each other
-        // default 50ms COMBO_TERM risks accidental triggering (e.g., vim sequences)
+        // Home row combo keys are typically pressed within 10ms of each other.
+        // Default 50ms COMBO_TERM risks accidental triggering (e.g., vim sequences).
         case DF_ESC:
             return 15;
         default:
@@ -109,6 +109,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         if (record->event.pressed) {
             rgb_matrix_sethsv_noeeprom(HSV_RED);
         } else {
+            // Wait until key is released before entering bootloader mode so that the LEDs have time to update
+            // (and sync to the other half)
             reset_keyboard();
         }
         return false;
@@ -117,12 +119,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-// RGB indicators for caps lock and toggled/one-shot layers
+// RGB indicators for caps lock and toggled layers
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (layer_state_is(_NAV)) {
         RGB_MATRIX_INDICATOR_SET_COLOR(27, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
     }
-
     if (host_keyboard_led_state().caps_lock) {
         RGB_MATRIX_INDICATOR_SET_COLOR(58, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
     }
