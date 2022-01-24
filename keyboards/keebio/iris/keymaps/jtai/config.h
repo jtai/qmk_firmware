@@ -23,6 +23,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // required for caps lock RGB indicator
 #define SPLIT_LED_STATE_ENABLE
 
+// required to sync custom state, e.g. caps word status
+#define SPLIT_TRANSACTION_IDS_USER PUT_CUSTOM_STATE
+#define FORCED_SYNC_THROTTLE_MS_USER 100
+
 // configure combos
 #define COMBO_COUNT 5
 #define COMBO_TERM_PER_COMBO

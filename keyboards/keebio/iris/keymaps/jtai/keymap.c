@@ -1,4 +1,5 @@
 #include QMK_KEYBOARD_H
+#include "transactions.h"
 #include "features/caps_word.h"
 
 #define _QWERTY 0
@@ -123,13 +124,55 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-// RGB indicators for caps lock and toggled layers
+typedef union {
+    uint8_t raw;
+    struct {
+        bool caps_word_active : 1;
+    };
+} custom_state_t;
+
+custom_state_t custom_state;
+
+void custom_state_handler_slave(uint8_t in_buflen, const void* in_data, uint8_t out_buflen, void* out_data) {
+    if (in_buflen == sizeof(custom_state)) {
+        memcpy(&custom_state, in_data, in_buflen);
+    }
+}
+
+void custom_state_handler_master(void) {
+    static uint8_t last_state = 0;
+    static uint32_t last_sync = 0;
+    bool needs_sync = false;
+
+    custom_state.caps_word_active = caps_word_get();
+
+    if (memcmp(&custom_state, &last_state, sizeof(custom_state))) {
+        needs_sync = true;
+        memcpy(&last_state, &custom_state, sizeof(custom_state));
+    }
+
+    if (timer_elapsed32(last_sync) > FORCED_SYNC_THROTTLE_MS_USER) {
+        needs_sync = true;
+    }
+
+    if (needs_sync) {
+        if (transaction_rpc_send(PUT_CUSTOM_STATE, sizeof(custom_state), &custom_state)) {
+            last_sync = timer_read32();
+        }
+    }
+}
+
+// RGB indicators for caps lock, toggled layers, and caps word
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (layer_state_is(_NAV)) {
         RGB_MATRIX_INDICATOR_SET_COLOR(27, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
     }
     if (host_keyboard_led_state().caps_lock) {
         RGB_MATRIX_INDICATOR_SET_COLOR(58, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
+    }
+    if (custom_state.caps_word_active) {
+        RGB_MATRIX_INDICATOR_SET_COLOR(23, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
+        RGB_MATRIX_INDICATOR_SET_COLOR(57, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
     }
 }
 
@@ -138,4 +181,12 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 void keyboard_post_init_user(void) {
     rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_SOLID_COLOR_UNDERGLOW);
     rgb_matrix_sethsv_noeeprom(HSV_OFF);
+
+    transaction_register_rpc(PUT_CUSTOM_STATE, custom_state_handler_slave);
+}
+
+void housekeeping_task_user(void) {
+    if (is_keyboard_master()) {
+        custom_state_handler_master();
+    }
 }
