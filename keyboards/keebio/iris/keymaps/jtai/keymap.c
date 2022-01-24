@@ -1,4 +1,5 @@
 #include QMK_KEYBOARD_H
+#include "features/caps_word.h"
 
 #define _QWERTY 0
 #define _NAV 1
@@ -87,6 +88,9 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
 static bool grave_esc_was_shifted = false;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    // Caps word feature, see https://getreuer.info/posts/keyboards/caps-word/index.html
+    if (!process_caps_word(keycode, record)) { return false; }
+
     // Adapted from quantum/process_keycode/process_grave_esc.c, except consider GRAVE_ESC shifted if
     // ALT is pressed (instead of GUI) to accommodate a physical Windows-style keyboard layout (CTRL, GUI, ALT)
     // with GUI and ALT swapped in macOS.
