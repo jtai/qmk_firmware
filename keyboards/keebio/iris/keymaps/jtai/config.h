@@ -20,10 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #define USE_I2C
 #define EE_HANDS
 
-// required for caps lock RGB indicator
-#define SPLIT_LED_STATE_ENABLE
-
-// required to sync custom state, e.g. caps word status
+// sync custom state
 #define SPLIT_TRANSACTION_IDS_USER PUT_CUSTOM_STATE
 #define FORCED_SYNC_THROTTLE_MS_USER 100
 

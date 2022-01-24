@@ -127,7 +127,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 typedef union {
     uint8_t raw;
     struct {
-        bool caps_word_active : 1;
+        bool nav_layer : 1;
+        bool caps_lock : 1;
+        bool caps_word : 1;
     };
 } custom_state_t;
 
@@ -144,7 +146,9 @@ void custom_state_handler_master(void) {
     static uint32_t last_sync = 0;
     bool needs_sync = false;
 
-    custom_state.caps_word_active = caps_word_get();
+    custom_state.nav_layer = layer_state_is(_NAV);
+    custom_state.caps_lock = host_keyboard_led_state().caps_lock;
+    custom_state.caps_word = caps_word_get();
 
     if (memcmp(&custom_state, &last_state, sizeof(custom_state))) {
         needs_sync = true;
@@ -162,15 +166,15 @@ void custom_state_handler_master(void) {
     }
 }
 
-// RGB indicators for caps lock, toggled layers, and caps word
+// RGB indicators for nav layer, caps lock, and caps word
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
-    if (layer_state_is(_NAV)) {
+    if (custom_state.nav_layer) {
         RGB_MATRIX_INDICATOR_SET_COLOR(27, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
     }
-    if (host_keyboard_led_state().caps_lock) {
+    if (custom_state.caps_lock) {
         RGB_MATRIX_INDICATOR_SET_COLOR(58, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
     }
-    if (custom_state.caps_word_active) {
+    if (custom_state.caps_word) {
         RGB_MATRIX_INDICATOR_SET_COLOR(23, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
         RGB_MATRIX_INDICATOR_SET_COLOR(57, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
     }
