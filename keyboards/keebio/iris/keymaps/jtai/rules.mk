@@ -7,3 +7,5 @@ GRAVE_ESC_ENABLE = no     # We define our own implementation
 
 COMBO_ENABLE = yes
 RGB_MATRIX_CUSTOM_USER = yes
+
+SRC += features/caps_word.c
