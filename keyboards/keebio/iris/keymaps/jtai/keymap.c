@@ -5,6 +5,11 @@
 #define _QWERTY 0
 #define _NAV 1
 #define _FN 2
+#define _GAME 3
+
+enum tap_dances {
+    TD_TG,
+};
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -16,9 +21,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
      KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                               KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    TG(_NAV),         KC_RALT, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,
+     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    TD(TD_TG),        KC_RALT, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
-                                    KC_LGUI, KC_LALT, MO(_FN),                   KC_RGUI, KC_SPC, KC_CAPS
+                                    KC_LGUI, KC_LALT, MO(_FN),                   KC_RGUI, KC_SPC,  KC_CAPS
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   ),
 
@@ -47,6 +52,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      _______, KC_F10,  KC_F11,  KC_F12,  KC_LBRC, KC_HOME, _______,          _______, KC_END,  KC_RBRC, _______, _______, _______, _______,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
                                     _______, _______, _______,                   _______, _______, _______
+                                // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
+  ),
+
+  [_GAME] = LAYOUT(
+  //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
+     _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
+  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
+     _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
+  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
+     _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
+  //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+     _______, _______, _______, _______, _______, _______, _______,          _______, _______, _______, _______, _______, _______, _______,
+  //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
+                                    KC_SPC,  _______, _______,                   _______, _______, _______
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   )
 };
@@ -83,6 +102,31 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
             return COMBO_TERM;
     }
 }
+
+void dance_toggle_layer(qk_tap_dance_state_t *state, void *user_data) {
+    switch (state->count) {
+        case 1:
+            if (!layer_state_is(_NAV)) {
+                layer_on(_NAV);
+            } else {
+                layer_off(_NAV);
+            }
+            break;
+        case 2:
+            if (!layer_state_is(_GAME)) {
+                layer_on(_GAME);
+                combo_disable();
+            } else {
+                layer_off(_GAME);
+                combo_enable();
+            }
+            break;
+    }
+}
+
+qk_tap_dance_action_t tap_dance_actions[] = {
+    [TD_TG] = ACTION_TAP_DANCE_FN(dance_toggle_layer),
+};
 
 // true if the last press of GRAVE_ESC was shifted (i.e. ALT or SHIFT were pressed), false otherwise.
 // Used to ensure that the correct keycode is released if the key is released.
@@ -127,9 +171,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 typedef union {
     uint8_t raw;
     struct {
-        bool nav_layer : 1;
-        bool caps_lock : 1;
-        bool caps_word : 1;
+        bool nav_layer  : 1;
+        bool game_layer : 1;
+        bool caps_lock  : 1;
+        bool caps_word  : 1;
     };
 } custom_state_t;
 
@@ -147,6 +192,7 @@ void custom_state_handler_master(void) {
     bool needs_sync = false;
 
     custom_state.nav_layer = layer_state_is(_NAV);
+    custom_state.game_layer = layer_state_is(_GAME);
     custom_state.caps_lock = host_keyboard_led_state().caps_lock;
     custom_state.caps_word = caps_word_get();
 
@@ -171,12 +217,19 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (custom_state.nav_layer) {
         RGB_MATRIX_INDICATOR_SET_COLOR(27, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
     }
+    if (custom_state.game_layer) {
+        RGB_MATRIX_INDICATOR_SET_COLOR(9, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // W
+        RGB_MATRIX_INDICATOR_SET_COLOR(13, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // A
+        RGB_MATRIX_INDICATOR_SET_COLOR(14, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // S
+        RGB_MATRIX_INDICATOR_SET_COLOR(15, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // D
+        RGB_MATRIX_INDICATOR_SET_COLOR(24, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // SPC
+    }
     if (custom_state.caps_lock) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(58, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
+        RGB_MATRIX_INDICATOR_SET_COLOR(58, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // CAPS
     }
     if (custom_state.caps_word) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(23, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
-        RGB_MATRIX_INDICATOR_SET_COLOR(57, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
+        RGB_MATRIX_INDICATOR_SET_COLOR(23, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // LSFT
+        RGB_MATRIX_INDICATOR_SET_COLOR(57, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // RSFT
     }
 }
 
