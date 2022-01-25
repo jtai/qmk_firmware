@@ -9,6 +9,7 @@
 
 enum tap_dances {
     TD_TG,
+    TD_CAPS,
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -23,7 +24,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
      KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    TD(TD_TG),        KC_RALT, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
-                                    KC_LGUI, KC_LALT, MO(_FN),                   KC_RGUI, KC_SPC,  KC_CAPS
+                                    KC_LGUI, KC_LALT, MO(_FN),                   KC_RGUI, KC_SPC,  TD(TD_CAPS)
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   ),
 
@@ -79,10 +80,10 @@ enum combos {
 };
 
 const uint16_t PROGMEM df_combo[]      = {KC_D, KC_F, COMBO_END};
-const uint16_t PROGMEM magic_r_combo[] = {KC_LGUI, KC_CAPS, KC_R, COMBO_END};
-const uint16_t PROGMEM magic_e_combo[] = {KC_LGUI, KC_CAPS, KC_E, COMBO_END};
-const uint16_t PROGMEM magic_d_combo[] = {KC_LGUI, KC_CAPS, KC_D, COMBO_END};
-const uint16_t PROGMEM magic_n_combo[] = {KC_LGUI, KC_CAPS, KC_N, COMBO_END};
+const uint16_t PROGMEM magic_r_combo[] = {KC_LGUI, TD(TD_CAPS), KC_R, COMBO_END};
+const uint16_t PROGMEM magic_e_combo[] = {KC_LGUI, TD(TD_CAPS), KC_E, COMBO_END};
+const uint16_t PROGMEM magic_d_combo[] = {KC_LGUI, TD(TD_CAPS), KC_D, COMBO_END};
+const uint16_t PROGMEM magic_n_combo[] = {KC_LGUI, TD(TD_CAPS), KC_N, COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
     [DF_ESC]          = COMBO(df_combo,      KC_ESC),
@@ -124,8 +125,20 @@ void dance_toggle_layer(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
+void dance_caps(qk_tap_dance_state_t *state, void *user_data) {
+    switch (state->count) {
+        case 1:
+            caps_word_set(!caps_word_get());
+            break;
+        case 2:
+            tap_code(KC_CAPS);
+            break;
+    }
+}
+
 qk_tap_dance_action_t tap_dance_actions[] = {
-    [TD_TG] = ACTION_TAP_DANCE_FN(dance_toggle_layer),
+    [TD_TG]   = ACTION_TAP_DANCE_FN(dance_toggle_layer),
+    [TD_CAPS] = ACTION_TAP_DANCE_FN(dance_caps),
 };
 
 // true if the last press of GRAVE_ESC was shifted (i.e. ALT or SHIFT were pressed), false otherwise.
@@ -215,21 +228,17 @@ void custom_state_handler_master(void) {
 // RGB indicators for nav layer, caps lock, and caps word
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (custom_state.nav_layer) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(27, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
+        RGB_MATRIX_INDICATOR_SET_COLOR(27, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // layer toggle key
     }
     if (custom_state.game_layer) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(9, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // W
-        RGB_MATRIX_INDICATOR_SET_COLOR(13, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // A
-        RGB_MATRIX_INDICATOR_SET_COLOR(14, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // S
-        RGB_MATRIX_INDICATOR_SET_COLOR(15, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // D
-        RGB_MATRIX_INDICATOR_SET_COLOR(24, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // SPC
+        RGB_MATRIX_INDICATOR_SET_COLOR(24, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // new space key
     }
     if (custom_state.caps_lock) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(58, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // CAPS
+        RGB_MATRIX_INDICATOR_SET_COLOR(58, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // caps key
     }
     if (custom_state.caps_word) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(23, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // LSFT
-        RGB_MATRIX_INDICATOR_SET_COLOR(57, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // RSFT
+        RGB_MATRIX_INDICATOR_SET_COLOR(23, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // left shift
+        RGB_MATRIX_INDICATOR_SET_COLOR(57, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // right shift
     }
 }
 
