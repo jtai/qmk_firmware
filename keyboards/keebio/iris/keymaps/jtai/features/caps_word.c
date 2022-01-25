@@ -48,6 +48,10 @@ bool process_caps_word(uint16_t keycode, keyrecord_t* record) {
       case QK_ONE_SHOT_LAYER ... QK_ONE_SHOT_LAYER + 255:
         return true;
 
+      // Ignore tap dance
+      case QK_TAP_DANCE ... QK_TAP_DANCE + 255:
+        return true;
+
 #ifndef NO_ACTION_TAPPING
       case QK_MOD_TAP ... QK_MOD_TAP_MAX:
         if (record->tap.count == 0) {
