@@ -15,6 +15,7 @@
  */
 #include QMK_KEYBOARD_H
 #include "features/caps_word.h"
+#include "drivers/led/issi/is31fl3733.h"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [0] = LAYOUT_65_ansi( /* Base */
@@ -65,4 +66,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 
     return true;
+}
+
+// Activate caps lock indicator LED when caps word is active
+void caps_word_set_user(bool active) {
+  if (active) {
+    IS31FL3733_set_color( 7+64-1, 0, 255, 0 );
+  } else {
+    led_t led_state = host_keyboard_led_state();
+    if (led_state.caps_lock) {
+      IS31FL3733_set_color( 7+64-1, 0, 255, 0 );
+    } else {
+      IS31FL3733_set_color( 7+64-1, 0, 0, 0 );
+    }
+  }
 }
