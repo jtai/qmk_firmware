@@ -38,7 +38,15 @@
     },
     "Q",
     "W",
-    "E",
+    {
+      "t": "#ffffff",
+      "a": 6
+    },
+    "<i class='fa fa-volume-up'></i>",
+    {
+      "t": "#727474",
+      "a": 4
+    },
     "R",
     "T",
     "Y",
@@ -80,10 +88,12 @@
     },
     "A",
     "S",
-    "D",
     {
       "t": "#ffffff",
-      "a": 6,
+      "a": 6
+    },
+    "<i class='fa fa-volume-down'></i>",
+    {
       "f": 2
     },
     "<i class='fa fa-play'></i><i class='fa fa-pause'></i>",
@@ -138,17 +148,9 @@
     },
     "Z",
     "X",
-    {
-      "t": "#ffffff",
-      "a": 6
-    },
-    "<i class='fa fa-volume-down'></i>",
-    "<i class='fa fa-volume-up'></i>",
-    "<i class='fa fa-volume-off'></i>",
-    {
-      "t": "#727474",
-      "a": 4
-    },
+    "C",
+    "V",
+    "B",
     "N",
     "M",
     "<\n,",
