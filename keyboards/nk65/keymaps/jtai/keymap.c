@@ -25,9 +25,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 [1] = LAYOUT_65_ansi( /* Missing keys, Media keys, Extra arrow keys */
     KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,  KC_INS,\
-    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_UP,   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_PSCR,\
-    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_MPLY, KC_MNXT, KC_TRNS, KC_LEFT, KC_DOWN, KC_RGHT, KC_TRNS, KC_TRNS,          KC_TRNS, KC_SLCK,\
-    KC_TRNS, KC_TRNS, KC_TRNS, KC_VOLD, KC_VOLU, KC_MUTE, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS, KC_PAUS,\
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_VOLU, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_UP,   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_PSCR,\
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_VOLD, KC_MPLY, KC_MNXT, KC_TRNS, KC_LEFT, KC_DOWN, KC_RGHT, KC_TRNS, KC_TRNS,          KC_TRNS, KC_SLCK,\
+    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS, KC_PAUS,\
     KC_TRNS, KC_TRNS, KC_TRNS,                KC_TRNS,                               KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
 
 [2] = LAYOUT_65_ansi( /* LED control, RESET, Caps lock */
@@ -38,58 +38,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRNS, KC_TRNS, KC_TRNS,                KC_TRNS,                               KC_TRNS, KC_TRNS, KC_TRNS, ES_DEC,  BR_DEC,  ES_INC),
 };
 
-void matrix_init_user(void) {
-  //user initialization
-}
-
-void matrix_scan_user(void) {
-  //user matrix
-}
-
-/* true if the last press of GRAVE_ESC was shifted (i.e. GUI or SHIFT were pressed), false otherwise.
- * Used to ensure that the correct keycode is released if the key is released.
- *
- * See quantum/process_keycode/process_grave_esc.c
- */
+// true if the last press of GRAVE_ESC was shifted (i.e. ALT or SHIFT were pressed), false otherwise.
+// Used to ensure that the correct keycode is released if the key is released.
 static bool grave_esc_was_shifted = false;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // See quantum/process_keycode/process_grave_esc.c
+
+    // Adapted from quantum/process_keycode/process_grave_esc.c, except consider GRAVE_ESC shifted if
+    // ALT is pressed (instead of GUI) to accommodate a physical Windows-style keyboard layout (CTRL, GUI, ALT)
+    // with GUI and ALT swapped in macOS.
     if (keycode == GRAVE_ESC) {
-        const uint8_t mods    = get_mods();
-        // add Alt to accommodate physical Windows-style keyboard layout (Ctrl, GUI, Alt)
-        // with GUI and Alt swapped in macOS
-        uint8_t       shifted = mods & MOD_MASK_SAG;
-
-#ifdef GRAVE_ESC_ALT_OVERRIDE
-        // if ALT is pressed, ESC is always sent
-        // this is handy for the cmd+opt+esc shortcut on macOS, among other things.
-        if (mods & MOD_MASK_ALT) {
-            shifted = 0;
-        }
-#endif
-
-#ifdef GRAVE_ESC_CTRL_OVERRIDE
-        // if CTRL is pressed, ESC is always sent
-        // this is handy for the ctrl+shift+esc shortcut on windows, among other things.
-        if (mods & MOD_MASK_CTRL) {
-            shifted = 0;
-        }
-#endif
-
-#ifdef GRAVE_ESC_GUI_OVERRIDE
-        // if GUI is pressed, ESC is always sent
-        if (mods & MOD_MASK_GUI) {
-            shifted = 0;
-        }
-#endif
-
-#ifdef GRAVE_ESC_SHIFT_OVERRIDE
-        // if SHIFT is pressed, ESC is always sent
-        if (mods & MOD_MASK_SHIFT) {
-            shifted = 0;
-        }
-#endif
+        const uint8_t mods = get_mods();
+        uint8_t shifted = mods & MOD_MASK_SA;
 
         if (record->event.pressed) {
             grave_esc_was_shifted = shifted;
@@ -97,11 +57,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         } else {
             del_key(grave_esc_was_shifted ? KC_GRAVE : KC_ESCAPE);
         }
-
         send_keyboard_report();
         return false;
     }
 
-    // Not a grave keycode so continue processing
     return true;
 }
