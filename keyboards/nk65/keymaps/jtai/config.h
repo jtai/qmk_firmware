@@ -9,3 +9,6 @@
 #undef RGB_BACKLIGHT_COLOR_2
 #define RGB_BACKLIGHT_COLOR_2 { .h = 160, .s = 64 }
 
+// configure combos
+#define COMBO_COUNT 1
+#define COMBO_TERM 15
