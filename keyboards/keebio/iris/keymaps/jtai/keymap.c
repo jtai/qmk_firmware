@@ -6,6 +6,7 @@
 #define _NAV 1
 #define _FN 2
 #define _GAME 3
+#define _RGB 4
 
 enum tap_dances {
     TD_TG,
@@ -68,6 +69,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
                                     KC_SPC,  _______, _______,                   _______, _______, _______
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
+  ),
+
+  [_RGB] = LAYOUT(
+  //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
+     TG(_RGB),_______, _______, _______, _______, _______,                            _______, _______, _______, _______, RGB_RMOD,RGB_MOD,
+  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
+     _______, _______, _______, _______, _______, _______,                            _______, _______, RGB_VAI, _______, _______, RGB_TOG,
+  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
+     _______, RGB_HUD, RGB_HUI, RGB_SAD, RGB_SAI, _______,                            _______, RGB_SPD, RGB_VAD, RGB_SPI, _______, _______,
+  //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+     _______, _______, _______, _______, _______, _______, _______,          _______, _______, _______, _______, _______, _______, _______,
+  //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
+                                    _______,  _______, _______,                   _______, _______, _______
+                                // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   )
 };
 
@@ -77,6 +92,7 @@ enum combos {
     MAGIC_E_EEP_RST,
     MAGIC_D_DEBUG,
     MAGIC_N_NK_TOGG,
+    MAGIC_L_RGB,
 };
 
 const uint16_t PROGMEM df_combo[]      = {KC_D, KC_F, COMBO_END};
@@ -84,6 +100,7 @@ const uint16_t PROGMEM magic_r_combo[] = {KC_LGUI, TD(TD_CAPS), KC_R, COMBO_END}
 const uint16_t PROGMEM magic_e_combo[] = {KC_LGUI, TD(TD_CAPS), KC_E, COMBO_END};
 const uint16_t PROGMEM magic_d_combo[] = {KC_LGUI, TD(TD_CAPS), KC_D, COMBO_END};
 const uint16_t PROGMEM magic_n_combo[] = {KC_LGUI, TD(TD_CAPS), KC_N, COMBO_END};
+const uint16_t PROGMEM magic_l_combo[] = {KC_LGUI, TD(TD_CAPS), KC_L, COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
     [DF_ESC]          = COMBO(df_combo,      KC_ESC),
@@ -91,6 +108,7 @@ combo_t key_combos[COMBO_COUNT] = {
     [MAGIC_E_EEP_RST] = COMBO(magic_e_combo, EEP_RST),
     [MAGIC_D_DEBUG]   = COMBO(magic_d_combo, DEBUG),
     [MAGIC_N_NK_TOGG] = COMBO(magic_n_combo, NK_TOGG),
+    [MAGIC_L_RGB]     = COMBO(magic_l_combo, TG(_RGB)),
 };
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
@@ -169,6 +187,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // Activate LEDs to indicate we're in bootloader mode
     if (keycode == RESET) {
         if (record->event.pressed) {
+            rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_SOLID_COLOR_UNDERGLOW);
             rgb_matrix_sethsv_noeeprom(HSV_RED);
         } else {
             // Wait until key is released before entering bootloader mode so that the LEDs have time to update
@@ -186,6 +205,7 @@ typedef union {
     struct {
         bool nav_layer  : 1;
         bool game_layer : 1;
+        bool rgb_layer  : 1;
         bool caps_lock  : 1;
         bool caps_word  : 1;
     };
@@ -206,6 +226,7 @@ void custom_state_handler_master(void) {
 
     custom_state.nav_layer = layer_state_is(_NAV);
     custom_state.game_layer = layer_state_is(_GAME);
+    custom_state.rgb_layer = layer_state_is(_RGB);
     custom_state.caps_lock = host_keyboard_led_state().caps_lock;
     custom_state.caps_word = caps_word_get();
 
@@ -233,6 +254,9 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (custom_state.game_layer) {
         RGB_MATRIX_INDICATOR_SET_COLOR(24, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // new space key
     }
+    if (custom_state.rgb_layer) {
+        RGB_MATRIX_INDICATOR_SET_COLOR(48, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // L key
+    }
     if (custom_state.caps_lock) {
         RGB_MATRIX_INDICATOR_SET_COLOR(58, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // caps key
     }
@@ -245,9 +269,6 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 // Must enable RGB matrix for indicators to work
 // See https://docs.qmk.fm/#/feature_rgb_matrix?id=indicators-without-rgb-matrix-effect
 void keyboard_post_init_user(void) {
-    rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_SOLID_COLOR_UNDERGLOW);
-    rgb_matrix_sethsv_noeeprom(HSV_OFF);
-
     transaction_register_rpc(PUT_CUSTOM_STATE, custom_state_handler_slave);
 }
 
