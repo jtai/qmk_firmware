@@ -5,8 +5,8 @@
 #define _QWERTY 0
 #define _NAV 1
 #define _FN 2
-#define _GAME 3
-#define _RGB 4
+#define _RGB 3
+#define _GAME 4
 
 enum tap_dances {
     TD_TG,
@@ -57,20 +57,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   ),
 
-  [_GAME] = LAYOUT(
-  //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
-     _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
-  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
-  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
-  //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-     _______, _______, _______, _______, _______, _______, _______,          _______, _______, _______, _______, _______, _______, _______,
-  //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
-                                    KC_SPC,  _______, _______,                   _______, _______, _______
-                                // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
-  ),
-
   [_RGB] = LAYOUT(
   //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
      _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, RGB_RMOD,RGB_MOD,
@@ -82,6 +68,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      _______, _______, _______, _______, _______, _______, _______,          _______, _______, _______, _______, _______, _______, _______,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
                                     _______,  _______, _______,                   _______, _______, _______
+                                // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
+  ),
+
+  [_GAME] = LAYOUT(
+  //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
+     _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
+  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
+     _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
+  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
+     _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
+  //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+     _______, _______, _______, _______, _______, _______, _______,          _______, _______, _______, _______, _______, _______, _______,
+  //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
+                                    KC_SPC,  _______, _______,                   _______, _______, _______
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   )
 };
@@ -129,19 +129,19 @@ void dance_toggle_layer(qk_tap_dance_state_t *state, void *user_data) {
             }
             break;
         case 2:
+            if (!layer_state_is(_RGB)) {
+                layer_on(_RGB);
+            } else {
+                layer_off(_RGB);
+            }
+            break;
+        case 3:
             if (!layer_state_is(_GAME)) {
                 layer_on(_GAME);
                 combo_disable();
             } else {
                 layer_off(_GAME);
                 combo_enable();
-            }
-            break;
-        case 3:
-            if (!layer_state_is(_RGB)) {
-                layer_on(_RGB);
-            } else {
-                layer_off(_RGB);
             }
             break;
     }
@@ -237,8 +237,8 @@ typedef union {
     uint8_t raw;
     struct {
         bool nav_layer  : 1;
-        bool game_layer : 1;
         bool rgb_layer  : 1;
+        bool game_layer : 1;
         bool caps_lock  : 1;
         bool caps_word  : 1;
     };
@@ -258,8 +258,8 @@ void custom_state_handler_master(void) {
     bool needs_sync = false;
 
     custom_state.nav_layer = layer_state_is(_NAV);
-    custom_state.game_layer = layer_state_is(_GAME);
     custom_state.rgb_layer = layer_state_is(_RGB);
+    custom_state.game_layer = layer_state_is(_GAME);
     custom_state.caps_lock = host_keyboard_led_state().caps_lock;
     custom_state.caps_word = caps_word_get();
 
@@ -284,11 +284,11 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (custom_state.nav_layer) {
         RGB_MATRIX_INDICATOR_SET_COLOR(27, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // layer toggle key
     }
-    if (custom_state.game_layer) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(24, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // new space key
-    }
     if (custom_state.rgb_layer) {
         RGB_MATRIX_INDICATOR_SET_COLOR(45, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // enter key
+    }
+    if (custom_state.game_layer) {
+        RGB_MATRIX_INDICATOR_SET_COLOR(24, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // new space key
     }
     if (custom_state.caps_lock) {
         RGB_MATRIX_INDICATOR_SET_COLOR(58, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // caps key
