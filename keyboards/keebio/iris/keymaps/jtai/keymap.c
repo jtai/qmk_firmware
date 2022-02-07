@@ -73,11 +73,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_RGB] = LAYOUT(
   //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
-     TG(_RGB),_______, _______, _______, _______, _______,                            _______, _______, _______, _______, RGB_RMOD,RGB_MOD,
+     _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, RGB_RMOD,RGB_MOD,
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     _______, _______, _______, _______, _______, _______,                            _______, _______, RGB_VAI, _______, _______, RGB_TOG,
+     _______, _______, _______, RGB_SAI, _______, _______,                            _______, _______, RGB_VAI, _______, _______, RGB_TOG,
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     _______, RGB_HUD, RGB_HUI, RGB_SAD, RGB_SAI, _______,                            _______, RGB_SPD, RGB_VAD, RGB_SPI, _______, _______,
+     _______, _______, RGB_HUD, RGB_SAD, RGB_HUI, _______,                            _______, RGB_SPD, RGB_VAD, RGB_SPI, _______, _______,
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
      _______, _______, _______, _______, _______, _______, _______,          _______, _______, _______, _______, _______, _______, _______,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
@@ -92,7 +92,6 @@ enum combos {
     MAGIC_E_EEP_RST,
     MAGIC_D_DEBUG,
     MAGIC_N_NK_TOGG,
-    MAGIC_L_RGB,
 };
 
 const uint16_t PROGMEM df_combo[]      = {KC_D, KC_F, COMBO_END};
@@ -100,7 +99,6 @@ const uint16_t PROGMEM magic_r_combo[] = {KC_LGUI, TD(TD_CAPS), KC_R, COMBO_END}
 const uint16_t PROGMEM magic_e_combo[] = {KC_LGUI, TD(TD_CAPS), KC_E, COMBO_END};
 const uint16_t PROGMEM magic_d_combo[] = {KC_LGUI, TD(TD_CAPS), KC_D, COMBO_END};
 const uint16_t PROGMEM magic_n_combo[] = {KC_LGUI, TD(TD_CAPS), KC_N, COMBO_END};
-const uint16_t PROGMEM magic_l_combo[] = {KC_LGUI, TD(TD_CAPS), KC_L, COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
     [DF_ESC]          = COMBO(df_combo,      KC_ESC),
@@ -108,7 +106,6 @@ combo_t key_combos[COMBO_COUNT] = {
     [MAGIC_E_EEP_RST] = COMBO(magic_e_combo, EEP_RST),
     [MAGIC_D_DEBUG]   = COMBO(magic_d_combo, DEBUG),
     [MAGIC_N_NK_TOGG] = COMBO(magic_n_combo, NK_TOGG),
-    [MAGIC_L_RGB]     = COMBO(magic_l_combo, TG(_RGB)),
 };
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
@@ -138,6 +135,13 @@ void dance_toggle_layer(qk_tap_dance_state_t *state, void *user_data) {
             } else {
                 layer_off(_GAME);
                 combo_enable();
+            }
+            break;
+        case 3:
+            if (!layer_state_is(_RGB)) {
+                layer_on(_RGB);
+            } else {
+                layer_off(_RGB);
             }
             break;
     }
@@ -255,7 +259,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         RGB_MATRIX_INDICATOR_SET_COLOR(24, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // new space key
     }
     if (custom_state.rgb_layer) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(48, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // L key
+        RGB_MATRIX_INDICATOR_SET_COLOR(45, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // enter key
     }
     if (custom_state.caps_lock) {
         RGB_MATRIX_INDICATOR_SET_COLOR(58, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // caps key
