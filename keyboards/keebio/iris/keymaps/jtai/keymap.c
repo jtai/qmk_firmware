@@ -167,6 +167,10 @@ qk_tap_dance_action_t tap_dance_actions[] = {
 // Used to ensure that the correct keycode is released if the key is released.
 static bool grave_esc_was_shifted = false;
 
+static bool rgb_matrix_disabled = false;
+static uint8_t rgb_matrix_config_mode = RGB_MATRIX_SOLID_COLOR;
+static HSV rgb_matrix_config_hsv = { .h = 0, .s = 0, .v = 0 };
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // Caps word feature, see https://getreuer.info/posts/keyboards/caps-word/index.html
     if (!process_caps_word(keycode, record)) { return false; }
@@ -185,6 +189,31 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             del_key(grave_esc_was_shifted ? KC_GRAVE : KC_ESCAPE);
         }
         send_keyboard_report();
+        return false;
+    }
+
+    // RGB should always be enabled, otherwise indicators won't work
+    // See https://docs.qmk.fm/#/feature_rgb_matrix?id=indicators-without-rgb-matrix-effect
+    if (keycode == RGB_TOG) {
+        if (!record->event.pressed) {
+            if (!rgb_matrix_disabled) {
+                // Save current values
+                rgb_matrix_config_mode = rgb_matrix_get_mode();
+                rgb_matrix_config_hsv = rgb_matrix_get_hsv();
+
+                // Pretend off
+                rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
+                rgb_matrix_sethsv_noeeprom(HSV_OFF);
+
+                rgb_matrix_disabled = true;
+            } else {
+                // Restore original values
+                rgb_matrix_mode_noeeprom(rgb_matrix_config_mode);
+                rgb_matrix_sethsv_noeeprom(rgb_matrix_config_hsv.h, rgb_matrix_config_hsv.s, rgb_matrix_config_hsv.v);
+
+                rgb_matrix_disabled = false;
+            }
+        }
         return false;
     }
 
@@ -270,8 +299,6 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     }
 }
 
-// Must enable RGB matrix for indicators to work
-// See https://docs.qmk.fm/#/feature_rgb_matrix?id=indicators-without-rgb-matrix-effect
 void keyboard_post_init_user(void) {
     transaction_register_rpc(PUT_CUSTOM_STATE, custom_state_handler_slave);
 }
