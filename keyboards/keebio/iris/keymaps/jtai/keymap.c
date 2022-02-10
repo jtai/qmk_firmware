@@ -89,29 +89,59 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 enum combos {
     DF_ESC,
     FG_DEL,
-    TG_ENT_RGB_TOG,
+    MAGIC_ENT_RGB_TOG,
     MAGIC_R_RESET,
     MAGIC_E_EEP_RST,
     MAGIC_D_DEBUG,
     MAGIC_N_NK_TOGG,
+    MAGIC_1_HYPER_1,
+    MAGIC_2_HYPER_2,
+    MAGIC_3_HYPER_3,
+    MAGIC_4_HYPER_4,
+    MAGIC_5_HYPER_5,
+    MAGIC_6_HYPER_6,
+    MAGIC_7_HYPER_7,
+    MAGIC_8_HYPER_8,
+    MAGIC_9_HYPER_9,
+    MAGIC_0_HYPER_0,
 };
 
 const uint16_t PROGMEM df_combo[]      = {KC_D, KC_F, COMBO_END};
 const uint16_t PROGMEM fg_combo[]      = {KC_F, KC_G, COMBO_END};
-const uint16_t PROGMEM tg_ent_combo[]  = {TD(TD_TG), KC_ENT, COMBO_END};
+const uint16_t PROGMEM magic_ent_combo[]  = {KC_LGUI, TD(TD_CAPS), KC_ENT, COMBO_END};
 const uint16_t PROGMEM magic_r_combo[] = {KC_LGUI, TD(TD_CAPS), KC_R, COMBO_END};
 const uint16_t PROGMEM magic_e_combo[] = {KC_LGUI, TD(TD_CAPS), KC_E, COMBO_END};
 const uint16_t PROGMEM magic_d_combo[] = {KC_LGUI, TD(TD_CAPS), KC_D, COMBO_END};
 const uint16_t PROGMEM magic_n_combo[] = {KC_LGUI, TD(TD_CAPS), KC_N, COMBO_END};
+const uint16_t PROGMEM magic_1_combo[] = {KC_LGUI, TD(TD_CAPS), KC_1, COMBO_END};
+const uint16_t PROGMEM magic_2_combo[] = {KC_LGUI, TD(TD_CAPS), KC_2, COMBO_END};
+const uint16_t PROGMEM magic_3_combo[] = {KC_LGUI, TD(TD_CAPS), KC_3, COMBO_END};
+const uint16_t PROGMEM magic_4_combo[] = {KC_LGUI, TD(TD_CAPS), KC_4, COMBO_END};
+const uint16_t PROGMEM magic_5_combo[] = {KC_LGUI, TD(TD_CAPS), KC_5, COMBO_END};
+const uint16_t PROGMEM magic_6_combo[] = {KC_LGUI, TD(TD_CAPS), KC_6, COMBO_END};
+const uint16_t PROGMEM magic_7_combo[] = {KC_LGUI, TD(TD_CAPS), KC_7, COMBO_END};
+const uint16_t PROGMEM magic_8_combo[] = {KC_LGUI, TD(TD_CAPS), KC_8, COMBO_END};
+const uint16_t PROGMEM magic_9_combo[] = {KC_LGUI, TD(TD_CAPS), KC_9, COMBO_END};
+const uint16_t PROGMEM magic_0_combo[] = {KC_LGUI, TD(TD_CAPS), KC_0, COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
-    [DF_ESC]          = COMBO(df_combo,      KC_ESC),
-    [FG_DEL]          = COMBO(fg_combo,      KC_DEL),
-    [TG_ENT_RGB_TOG]  = COMBO(tg_ent_combo,  RGB_TOG),
-    [MAGIC_R_RESET]   = COMBO(magic_r_combo, RESET),
-    [MAGIC_E_EEP_RST] = COMBO(magic_e_combo, EEP_RST),
-    [MAGIC_D_DEBUG]   = COMBO(magic_d_combo, DEBUG),
-    [MAGIC_N_NK_TOGG] = COMBO(magic_n_combo, NK_TOGG),
+    [DF_ESC]            = COMBO(df_combo,        KC_ESC),
+    [FG_DEL]            = COMBO(fg_combo,        KC_DEL),
+    [MAGIC_ENT_RGB_TOG] = COMBO(magic_ent_combo, RGB_TOG),
+    [MAGIC_R_RESET]     = COMBO(magic_r_combo,   RESET),
+    [MAGIC_E_EEP_RST]   = COMBO(magic_e_combo,   EEP_RST),
+    [MAGIC_D_DEBUG]     = COMBO(magic_d_combo,   DEBUG),
+    [MAGIC_N_NK_TOGG]   = COMBO(magic_n_combo,   NK_TOGG),
+    [MAGIC_1_HYPER_1]   = COMBO(magic_1_combo,   HYPR(KC_1)),
+    [MAGIC_2_HYPER_2]   = COMBO(magic_2_combo,   HYPR(KC_2)),
+    [MAGIC_3_HYPER_3]   = COMBO(magic_3_combo,   HYPR(KC_3)),
+    [MAGIC_4_HYPER_4]   = COMBO(magic_4_combo,   HYPR(KC_4)),
+    [MAGIC_5_HYPER_5]   = COMBO(magic_5_combo,   HYPR(KC_5)),
+    [MAGIC_6_HYPER_6]   = COMBO(magic_6_combo,   HYPR(KC_6)),
+    [MAGIC_7_HYPER_7]   = COMBO(magic_7_combo,   HYPR(KC_7)),
+    [MAGIC_8_HYPER_8]   = COMBO(magic_8_combo,   HYPR(KC_8)),
+    [MAGIC_9_HYPER_9]   = COMBO(magic_9_combo,   HYPR(KC_9)),
+    [MAGIC_0_HYPER_0]   = COMBO(magic_0_combo,   HYPR(KC_0)),
 };
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
