@@ -88,6 +88,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 enum combos {
     DF_ESC,
+    FG_DEL,
     TG_ENT_RGB_TOG,
     MAGIC_R_RESET,
     MAGIC_E_EEP_RST,
@@ -96,6 +97,7 @@ enum combos {
 };
 
 const uint16_t PROGMEM df_combo[]      = {KC_D, KC_F, COMBO_END};
+const uint16_t PROGMEM fg_combo[]      = {KC_F, KC_G, COMBO_END};
 const uint16_t PROGMEM tg_ent_combo[]  = {TD(TD_TG), KC_ENT, COMBO_END};
 const uint16_t PROGMEM magic_r_combo[] = {KC_LGUI, TD(TD_CAPS), KC_R, COMBO_END};
 const uint16_t PROGMEM magic_e_combo[] = {KC_LGUI, TD(TD_CAPS), KC_E, COMBO_END};
@@ -104,6 +106,7 @@ const uint16_t PROGMEM magic_n_combo[] = {KC_LGUI, TD(TD_CAPS), KC_N, COMBO_END}
 
 combo_t key_combos[COMBO_COUNT] = {
     [DF_ESC]          = COMBO(df_combo,      KC_ESC),
+    [FG_DEL]          = COMBO(fg_combo,      KC_DEL),
     [TG_ENT_RGB_TOG]  = COMBO(tg_ent_combo,  RGB_TOG),
     [MAGIC_R_RESET]   = COMBO(magic_r_combo, RESET),
     [MAGIC_E_EEP_RST] = COMBO(magic_e_combo, EEP_RST),
@@ -116,6 +119,7 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         // Home row combo keys are typically pressed within 10ms of each other.
         // Default 50ms COMBO_TERM risks accidental triggering (e.g., vim sequences).
         case DF_ESC:
+        case FG_DEL:
             return 20;
         default:
             return COMBO_TERM;
