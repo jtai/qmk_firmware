@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define FORCED_SYNC_THROTTLE_MS_USER 100
 
 // configure combos
-#define COMBO_COUNT 17
+#define COMBO_COUNT 7
 #define COMBO_TERM_PER_COMBO
 
 // rgb matrix effects
