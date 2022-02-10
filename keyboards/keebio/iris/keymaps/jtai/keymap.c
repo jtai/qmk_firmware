@@ -94,16 +94,6 @@ enum combos {
     MAGIC_E_EEP_RST,
     MAGIC_D_DEBUG,
     MAGIC_N_NK_TOGG,
-    MAGIC_1_HYPER_1,
-    MAGIC_2_HYPER_2,
-    MAGIC_3_HYPER_3,
-    MAGIC_4_HYPER_4,
-    MAGIC_5_HYPER_5,
-    MAGIC_6_HYPER_6,
-    MAGIC_7_HYPER_7,
-    MAGIC_8_HYPER_8,
-    MAGIC_9_HYPER_9,
-    MAGIC_0_HYPER_0,
 };
 
 const uint16_t PROGMEM df_combo[]      = {KC_D, KC_F, COMBO_END};
@@ -113,16 +103,6 @@ const uint16_t PROGMEM magic_r_combo[] = {KC_LGUI, TD(TD_CAPS), KC_R, COMBO_END}
 const uint16_t PROGMEM magic_e_combo[] = {KC_LGUI, TD(TD_CAPS), KC_E, COMBO_END};
 const uint16_t PROGMEM magic_d_combo[] = {KC_LGUI, TD(TD_CAPS), KC_D, COMBO_END};
 const uint16_t PROGMEM magic_n_combo[] = {KC_LGUI, TD(TD_CAPS), KC_N, COMBO_END};
-const uint16_t PROGMEM magic_1_combo[] = {KC_LGUI, TD(TD_CAPS), KC_1, COMBO_END};
-const uint16_t PROGMEM magic_2_combo[] = {KC_LGUI, TD(TD_CAPS), KC_2, COMBO_END};
-const uint16_t PROGMEM magic_3_combo[] = {KC_LGUI, TD(TD_CAPS), KC_3, COMBO_END};
-const uint16_t PROGMEM magic_4_combo[] = {KC_LGUI, TD(TD_CAPS), KC_4, COMBO_END};
-const uint16_t PROGMEM magic_5_combo[] = {KC_LGUI, TD(TD_CAPS), KC_5, COMBO_END};
-const uint16_t PROGMEM magic_6_combo[] = {KC_LGUI, TD(TD_CAPS), KC_6, COMBO_END};
-const uint16_t PROGMEM magic_7_combo[] = {KC_LGUI, TD(TD_CAPS), KC_7, COMBO_END};
-const uint16_t PROGMEM magic_8_combo[] = {KC_LGUI, TD(TD_CAPS), KC_8, COMBO_END};
-const uint16_t PROGMEM magic_9_combo[] = {KC_LGUI, TD(TD_CAPS), KC_9, COMBO_END};
-const uint16_t PROGMEM magic_0_combo[] = {KC_LGUI, TD(TD_CAPS), KC_0, COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
     [DF_ESC]            = COMBO(df_combo,        KC_ESC),
@@ -132,16 +112,6 @@ combo_t key_combos[COMBO_COUNT] = {
     [MAGIC_E_EEP_RST]   = COMBO(magic_e_combo,   EEP_RST),
     [MAGIC_D_DEBUG]     = COMBO(magic_d_combo,   DEBUG),
     [MAGIC_N_NK_TOGG]   = COMBO(magic_n_combo,   NK_TOGG),
-    [MAGIC_1_HYPER_1]   = COMBO(magic_1_combo,   HYPR(KC_1)),
-    [MAGIC_2_HYPER_2]   = COMBO(magic_2_combo,   HYPR(KC_2)),
-    [MAGIC_3_HYPER_3]   = COMBO(magic_3_combo,   HYPR(KC_3)),
-    [MAGIC_4_HYPER_4]   = COMBO(magic_4_combo,   HYPR(KC_4)),
-    [MAGIC_5_HYPER_5]   = COMBO(magic_5_combo,   HYPR(KC_5)),
-    [MAGIC_6_HYPER_6]   = COMBO(magic_6_combo,   HYPR(KC_6)),
-    [MAGIC_7_HYPER_7]   = COMBO(magic_7_combo,   HYPR(KC_7)),
-    [MAGIC_8_HYPER_8]   = COMBO(magic_8_combo,   HYPR(KC_8)),
-    [MAGIC_9_HYPER_9]   = COMBO(magic_9_combo,   HYPR(KC_9)),
-    [MAGIC_0_HYPER_0]   = COMBO(magic_0_combo,   HYPR(KC_0)),
 };
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
@@ -156,13 +126,23 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     }
 }
 
-void dance_toggle_layer(qk_tap_dance_state_t *state, void *user_data) {
+static bool dance_toggle_layer_hold = false;
+
+void dance_toggle_layer_finished(qk_tap_dance_state_t *state, void *user_data) {
     switch (state->count) {
         case 1:
-            if (!layer_state_is(_NAV)) {
-                layer_on(_NAV);
+            if (state->pressed) {
+                dance_toggle_layer_hold = true;
+                register_code(KC_LCTL);
+                register_code(KC_LGUI);
+                register_code(KC_LSFT);
+                register_code(KC_LALT);
             } else {
-                layer_off(_NAV);
+                if (!layer_state_is(_NAV)) {
+                    layer_on(_NAV);
+                } else {
+                    layer_off(_NAV);
+                }
             }
             break;
         case 2:
@@ -184,6 +164,16 @@ void dance_toggle_layer(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
+void dance_toggle_layer_reset(qk_tap_dance_state_t *state, void *user_data) {
+    if (dance_toggle_layer_hold) {
+        dance_toggle_layer_hold = false;
+        unregister_code(KC_LALT);
+        unregister_code(KC_LSFT);
+        unregister_code(KC_LGUI);
+        unregister_code(KC_LCTL);
+    }
+}
+
 void dance_caps(qk_tap_dance_state_t *state, void *user_data) {
     switch (state->count) {
         case 1:
@@ -196,7 +186,7 @@ void dance_caps(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 qk_tap_dance_action_t tap_dance_actions[] = {
-    [TD_TG]   = ACTION_TAP_DANCE_FN(dance_toggle_layer),
+    [TD_TG]   = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_toggle_layer_finished, dance_toggle_layer_reset),
     [TD_CAPS] = ACTION_TAP_DANCE_FN(dance_caps),
 };
 
