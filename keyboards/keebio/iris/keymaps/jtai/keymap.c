@@ -3,8 +3,8 @@
 #include "features/caps_word.h"
 
 #define _QWERTY 0
-#define _NAV 1
-#define _FN 2
+#define _FN 1
+#define _NAV 2
 #define _RGB 3
 #define _GAME 4
 
@@ -23,23 +23,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
      KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                               KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    TD(TD_TG),        KC_RALT, KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,
+     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_DEL,          TD(TD_TG),KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
-                                    KC_LGUI, KC_LALT, MO(_FN),                   KC_RGUI, KC_SPC,  TD(TD_CAPS)
-                                // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
-  ),
-
-  [_NAV] = LAYOUT(
-  //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
-     _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
-  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     _______, _______, _______, _______, _______, _______,                            KC_PGUP, _______, KC_UP,   _______, _______, _______,
-  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     _______, _______, _______, _______, _______, _______,                            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______,
-  //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-     _______, _______, _______, _______, _______, KC_HOME, _______,          _______, KC_END,  _______, _______, _______, _______, _______,
-  //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
-                                    _______, _______, _______,                   _______, _______, _______
+                                    KC_LGUI, KC_LALT, MO(_FN),                   MO(_FN), KC_SPC,  TD(TD_CAPS)
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   ),
 
@@ -52,6 +38,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      _______, _______, _______, KC_VOLD, KC_MPLY, KC_MNXT,                            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______,
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
      _______, KC_F10,  KC_F11,  KC_F12,  KC_LBRC, KC_HOME, _______,          _______, KC_END,  KC_RBRC, _______, _______, _______, _______,
+  //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
+                                    _______, _______, _______,                   _______, _______, _______
+                                // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
+  ),
+
+  [_NAV] = LAYOUT(
+  //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
+     _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
+  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
+     _______, _______, _______, _______, _______, _______,                            KC_PGUP, _______, KC_UP,   _______, _______, _______,
+  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
+     _______, _______, _______, _______, _______, _______,                            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______,
+  //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+     _______, _______, _______, _______, _______, KC_HOME, _______,          _______, KC_END,  _______, _______, _______, _______, _______,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
                                     _______, _______, _______,                   _______, _______, _______
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
@@ -81,14 +81,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
      _______, _______, _______, _______, _______, _______, _______,          _______, _______, _______, _______, _______, _______, _______,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
-                                    KC_SPC,  _______, _______,                   _______, _______, _______
+                                    KC_SPC,  _______, _______,                   _______, KC_LGUI, _______
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   )
 };
 
 enum combos {
     DF_ESC,
-    FG_DEL,
     MAGIC_ENT_RGB_TOG,
     MAGIC_R_RESET,
     MAGIC_E_EEP_RST,
@@ -96,17 +95,15 @@ enum combos {
     MAGIC_N_NK_TOGG,
 };
 
-const uint16_t PROGMEM df_combo[]      = {KC_D, KC_F, COMBO_END};
-const uint16_t PROGMEM fg_combo[]      = {KC_F, KC_G, COMBO_END};
-const uint16_t PROGMEM magic_ent_combo[]  = {KC_LGUI, TD(TD_CAPS), KC_ENT, COMBO_END};
-const uint16_t PROGMEM magic_r_combo[] = {KC_LGUI, TD(TD_CAPS), KC_R, COMBO_END};
-const uint16_t PROGMEM magic_e_combo[] = {KC_LGUI, TD(TD_CAPS), KC_E, COMBO_END};
-const uint16_t PROGMEM magic_d_combo[] = {KC_LGUI, TD(TD_CAPS), KC_D, COMBO_END};
-const uint16_t PROGMEM magic_n_combo[] = {KC_LGUI, TD(TD_CAPS), KC_N, COMBO_END};
+const uint16_t PROGMEM df_combo[]        = {KC_D, KC_F, COMBO_END};
+const uint16_t PROGMEM magic_ent_combo[] = {KC_LGUI, TD(TD_CAPS), KC_ENT, COMBO_END};
+const uint16_t PROGMEM magic_r_combo[]   = {KC_LGUI, TD(TD_CAPS), KC_R, COMBO_END};
+const uint16_t PROGMEM magic_e_combo[]   = {KC_LGUI, TD(TD_CAPS), KC_E, COMBO_END};
+const uint16_t PROGMEM magic_d_combo[]   = {KC_LGUI, TD(TD_CAPS), KC_D, COMBO_END};
+const uint16_t PROGMEM magic_n_combo[]   = {KC_LGUI, TD(TD_CAPS), KC_N, COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
     [DF_ESC]            = COMBO(df_combo,        KC_ESC),
-    [FG_DEL]            = COMBO(fg_combo,        KC_DEL),
     [MAGIC_ENT_RGB_TOG] = COMBO(magic_ent_combo, RGB_TOG),
     [MAGIC_R_RESET]     = COMBO(magic_r_combo,   RESET),
     [MAGIC_E_EEP_RST]   = COMBO(magic_e_combo,   EEP_RST),
@@ -119,7 +116,6 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         // Home row combo keys are typically pressed within 10ms of each other.
         // Default 50ms COMBO_TERM risks accidental triggering (e.g., vim sequences).
         case DF_ESC:
-        case FG_DEL:
             return 20;
         default:
             return COMBO_TERM;
@@ -309,13 +305,13 @@ void custom_state_handler_master(void) {
 // RGB indicators for nav layer, caps lock, and caps word
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (custom_state.nav_layer) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(27, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // layer toggle key
+        RGB_MATRIX_INDICATOR_SET_COLOR(61, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // layer toggle key
     }
     if (custom_state.rgb_layer) {
         RGB_MATRIX_INDICATOR_SET_COLOR(45, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // enter key
     }
     if (custom_state.game_layer) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(24, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // new space key
+        RGB_MATRIX_INDICATOR_SET_COLOR(59, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // old space key
     }
     if (custom_state.caps_lock) {
         RGB_MATRIX_INDICATOR_SET_COLOR(58, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // caps key
