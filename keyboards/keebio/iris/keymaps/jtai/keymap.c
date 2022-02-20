@@ -9,6 +9,7 @@
 #define _GAME 4
 
 enum tap_dances {
+    TD_LH,
     TD_TG,
     TD_CAPS,
 };
@@ -23,7 +24,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
      KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                               KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_DEL,          TD(TD_TG),KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,
+     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    TD(TD_LH),       TD(TD_TG),KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
                                     KC_LGUI, KC_LALT, MO(_FN),                   MO(_FN), KC_SPC,  TD(TD_CAPS)
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
@@ -122,6 +123,17 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     }
 }
 
+void dance_left_hand(qk_tap_dance_state_t *state, void *user_data) {
+    switch (state->count) {
+        case 1:
+            tap_code(KC_SPC);
+            break;
+        case 2:
+            tap_code(KC_DEL);
+            break;
+    }
+}
+
 static bool dance_toggle_layer_hold = false;
 
 void dance_toggle_layer_finished(qk_tap_dance_state_t *state, void *user_data) {
@@ -182,6 +194,7 @@ void dance_caps(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 qk_tap_dance_action_t tap_dance_actions[] = {
+    [TD_LH]   = ACTION_TAP_DANCE_FN(dance_left_hand),
     [TD_TG]   = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_toggle_layer_finished, dance_toggle_layer_reset),
     [TD_CAPS] = ACTION_TAP_DANCE_FN(dance_caps),
 };
