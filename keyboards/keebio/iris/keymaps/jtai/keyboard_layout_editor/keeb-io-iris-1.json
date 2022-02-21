@@ -92,16 +92,8 @@
     },
     ")\neffect -\n\n\n\n\n0",
     {
-      "c": "#999999"
-    },
-    "\neffect +\n\n\n\n\nbkspc"
-  ],
-  [
-    {
-      "y": -0.5,
-      "x": 3,
-      "c": "#cccccc",
-      "t": "#ad11bd\n#009123\n\n\n\n\n#000000",
+      "c": "#999999",
+      "t": "#ad11bd\n#009123",
       "fa": [
         1,
         2,
@@ -111,6 +103,15 @@
         0,
         4
       ]
+    },
+    "RGB_MOD\neffect +\n\n\n\n\nbkspc"
+  ],
+  [
+    {
+      "y": -0.5,
+      "x": 3,
+      "c": "#cccccc",
+      "t": "#ad11bd\n#009123\n\n\n\n\n#000000"
     },
     "EEP_RST\nsat +\n\n\n\n\ne",
     {
