@@ -89,6 +89,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 enum combos {
     DF_ESC,
+    MAGIC_BSPC_RGB_MOD,
     MAGIC_ENT_RGB_TOG,
     MAGIC_R_RESET,
     MAGIC_E_EEP_RST,
@@ -96,20 +97,22 @@ enum combos {
     MAGIC_N_NK_TOGG,
 };
 
-const uint16_t PROGMEM df_combo[]        = {KC_D, KC_F, COMBO_END};
-const uint16_t PROGMEM magic_ent_combo[] = {KC_LGUI, TD(TD_CAPS), KC_ENT, COMBO_END};
-const uint16_t PROGMEM magic_r_combo[]   = {KC_LGUI, TD(TD_CAPS), KC_R, COMBO_END};
-const uint16_t PROGMEM magic_e_combo[]   = {KC_LGUI, TD(TD_CAPS), KC_E, COMBO_END};
-const uint16_t PROGMEM magic_d_combo[]   = {KC_LGUI, TD(TD_CAPS), KC_D, COMBO_END};
-const uint16_t PROGMEM magic_n_combo[]   = {KC_LGUI, TD(TD_CAPS), KC_N, COMBO_END};
+const uint16_t PROGMEM df_combo[]         = {KC_D, KC_F, COMBO_END};
+const uint16_t PROGMEM magic_bspc_combo[] = {KC_LGUI, TD(TD_CAPS), KC_BSPC, COMBO_END};
+const uint16_t PROGMEM magic_ent_combo[]  = {KC_LGUI, TD(TD_CAPS), KC_ENT, COMBO_END};
+const uint16_t PROGMEM magic_r_combo[]    = {KC_LGUI, TD(TD_CAPS), KC_R, COMBO_END};
+const uint16_t PROGMEM magic_e_combo[]    = {KC_LGUI, TD(TD_CAPS), KC_E, COMBO_END};
+const uint16_t PROGMEM magic_d_combo[]    = {KC_LGUI, TD(TD_CAPS), KC_D, COMBO_END};
+const uint16_t PROGMEM magic_n_combo[]    = {KC_LGUI, TD(TD_CAPS), KC_N, COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
-    [DF_ESC]            = COMBO(df_combo,        KC_ESC),
-    [MAGIC_ENT_RGB_TOG] = COMBO(magic_ent_combo, RGB_TOG),
-    [MAGIC_R_RESET]     = COMBO(magic_r_combo,   RESET),
-    [MAGIC_E_EEP_RST]   = COMBO(magic_e_combo,   EEP_RST),
-    [MAGIC_D_DEBUG]     = COMBO(magic_d_combo,   DEBUG),
-    [MAGIC_N_NK_TOGG]   = COMBO(magic_n_combo,   NK_TOGG),
+    [DF_ESC]             = COMBO(df_combo,         KC_ESC),
+    [MAGIC_BSPC_RGB_MOD] = COMBO(magic_bspc_combo, RGB_MOD),
+    [MAGIC_ENT_RGB_TOG]  = COMBO(magic_ent_combo,  RGB_TOG),
+    [MAGIC_R_RESET]      = COMBO(magic_r_combo,    RESET),
+    [MAGIC_E_EEP_RST]    = COMBO(magic_e_combo,    EEP_RST),
+    [MAGIC_D_DEBUG]      = COMBO(magic_d_combo,    DEBUG),
+    [MAGIC_N_NK_TOGG]    = COMBO(magic_n_combo,    NK_TOGG),
 };
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
