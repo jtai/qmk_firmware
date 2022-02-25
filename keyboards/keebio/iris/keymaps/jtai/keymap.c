@@ -120,7 +120,7 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         // Home row combo keys are typically pressed within 10ms of each other.
         // Default 50ms COMBO_TERM risks accidental triggering (e.g., vim sequences).
         case DF_ESC:
-            return 20;
+            return 25;
         default:
             return COMBO_TERM;
     }
