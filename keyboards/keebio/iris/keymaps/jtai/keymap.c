@@ -5,8 +5,9 @@
 #define _QWERTY 0
 #define _FN 1
 #define _NAV 2
-#define _RGB 3
-#define _GAME 4
+#define _NAV_TG 3
+#define _RGB 4
+#define _GAME 5
 
 enum tap_dances {
     TD_LH,
@@ -45,6 +46,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [_NAV] = LAYOUT(
+  //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
+     _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
+  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
+     _______, _______, _______, _______, _______, _______,                            _______, KC_PGUP, KC_UP,   KC_HOME, _______, _______,
+  //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
+     _______, _______, _______, _______, _______, _______,                            _______, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______,
+  //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+     _______, _______, _______, _______, _______, _______, _______,          _______, _______, KC_PGDN, _______, KC_END,  _______, _______,
+  //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
+                                    _______, _______, _______,                   _______, _______, _______
+                                // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
+  ),
+
+  [_NAV_TG] = LAYOUT(
   //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
      _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
@@ -149,10 +164,10 @@ void dance_toggle_layer_finished(qk_tap_dance_state_t *state, void *user_data) {
                 register_code(KC_LSFT);
                 register_code(KC_LALT);
             } else {
-                if (!layer_state_is(_NAV)) {
-                    layer_on(_NAV);
+                if (!layer_state_is(_NAV_TG)) {
+                    layer_on(_NAV_TG);
                 } else {
-                    layer_off(_NAV);
+                    layer_off(_NAV_TG);
                 }
             }
             break;
@@ -296,7 +311,7 @@ void custom_state_handler_master(void) {
     static uint32_t last_sync = 0;
     bool needs_sync = false;
 
-    custom_state.nav_layer = layer_state_is(_NAV);
+    custom_state.nav_layer = layer_state_is(_NAV_TG);
     custom_state.rgb_layer = layer_state_is(_RGB);
     custom_state.game_layer = layer_state_is(_GAME);
     custom_state.caps_lock = host_keyboard_led_state().caps_lock;
@@ -321,7 +336,7 @@ void custom_state_handler_master(void) {
 // RGB indicators for nav layer, caps lock, and caps word
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (custom_state.nav_layer) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(61, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // layer toggle key
+        RGB_MATRIX_INDICATOR_SET_COLOR(60, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // nav key
     }
     if (custom_state.rgb_layer) {
         RGB_MATRIX_INDICATOR_SET_COLOR(45, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // enter key
