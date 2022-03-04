@@ -28,11 +28,13 @@ bool process_caps_word(uint16_t keycode, keyrecord_t* record) {
 #endif  // NO_ACTION_ONESHOT
 
   if (!caps_word_active) {
+    /*
     // Pressing both shift keys at the same time enables caps word.
     if ((mods & MOD_MASK_SHIFT) == MOD_MASK_SHIFT) {
       caps_word_set(true);  // Activate Caps Word.
       return false;
     }
+    */
     return true;
   }
 
