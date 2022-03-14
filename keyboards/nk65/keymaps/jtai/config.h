@@ -11,4 +11,4 @@
 
 // configure combos
 #define COMBO_COUNT 1
-#define COMBO_TERM 15
+#define COMBO_TERM 25
