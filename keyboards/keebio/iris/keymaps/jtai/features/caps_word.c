@@ -18,6 +18,12 @@
 
 #include "caps_word.h"
 
+// keep in sync with keymap.c
+enum custom_keycodes {
+    MO_FN = SAFE_RANGE,
+    MO_NAV,
+};
+
 static bool caps_word_active = false;
 
 bool process_caps_word(uint16_t keycode, keyrecord_t* record) {
@@ -119,6 +125,8 @@ __attribute__((weak)) bool caps_word_press_user(uint16_t keycode) {
     case KC_BSPC:
     case KC_MINS:
     case KC_UNDS:
+    case MO_FN:
+    case MO_NAV:
       return true;
 
     default:
