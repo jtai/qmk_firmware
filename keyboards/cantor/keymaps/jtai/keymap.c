@@ -78,6 +78,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
+bool get_ignore_mod_tap_interrupt(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        // avoid accidental hyper shortcuts when typing contractions such as "can't"
+        case HYPR_T(KC_QUOT):
+            return true;
+        default:
+            return false;
+    }
+}
+
 bool led_update_user(led_t led_state) {
     // caps lock indicator should only light on the left (non-master) side
     return !is_keyboard_master();
