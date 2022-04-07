@@ -73,10 +73,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
     }
 
+    // TODO: intercept RESET and turn on both indicator LEDs
+
     return true;
 }
 
-// TODO: set P13 LEDs
-// left on = caps lock
-// right on = caps word
-// both on = firmware flashing mode
+bool led_update_user(led_t led_state) {
+    // caps lock indicator should only light on the left (non-master) side
+    return !is_keyboard_master();
+}
+
+void caps_word_set_user(bool active) {
+    // caps word indicator should only light on the right (master) side
+    // this code will only run on the master because caps word state
+    // is not transported to the non-master side
+    uint16_t level = active ? LED_PIN_ON_STATE : ~LED_PIN_ON_STATE;
+    writePin(LED_CAPS_LOCK_PIN, level);
+}
