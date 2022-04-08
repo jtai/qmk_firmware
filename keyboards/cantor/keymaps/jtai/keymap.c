@@ -76,13 +76,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 bool get_ignore_mod_tap_interrupt(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        // avoid accidental hyper shortcuts when typing contractions such as "can't"
-        case HYPR_T(KC_QUOT):
-        case RGUI_T(KC_SPC):
-        case RALT_T(KC_ENT):
-            return true;
-        default:
+        // allow mod tap interrupt for ctrl
+        // tab is typically typed on its own, so chances of rolling are low
+        case LCTL_T(KC_TAB):
             return false;
+        default:
+            return true;
     }
 }
 
