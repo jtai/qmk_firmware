@@ -3,21 +3,15 @@
 #include "features/caps_word.h"
 
 #define _QWERTY 0
-#define _FN 1
-#define _NAV 2
-#define _RGB 3
+#define _LOWER 1
+#define _RAISE 2
+#define _ADJUST 3
 #define _NAV_TG 4
 #define _GAME_TG 5
-
-enum custom_keycodes {
-    MO_FN = SAFE_RANGE,
-    MO_NAV,
-};
 
 enum tap_dances {
     TD_LH,
     TD_TG,
-    TD_CAPS,
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -26,31 +20,31 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
      KC_GESC, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                               KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC,
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                               KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_ENT,
+     KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                               KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
      KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                               KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
      KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    TD(TD_LH),       TD(TD_TG),KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
-                                    KC_LGUI, KC_LALT, MO_FN,                     MO_NAV,  KC_SPC,  TD(TD_CAPS)
+                                    KC_LALT, KC_LGUI, MO(_LOWER),              MO(_RAISE),RGUI_T(KC_SPC),RALT_T(KC_ENT)
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   ),
 
-  [_FN] = LAYOUT(
+  [_LOWER] = LAYOUT(
   //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
-     KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                              KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_MINS, KC_EQL,
+     KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                              KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  _______,
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     _______, _______, _______, KC_VOLU, _______, _______,                            _______, KC_PGUP, KC_UP,   KC_HOME, KC_UNDS, KC_BSLS,
+     _______, KC_F11,  KC_F12,  _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     _______, _______, _______, KC_VOLD, KC_MPLY, KC_MNXT,                            _______, KC_LEFT, KC_DOWN, KC_RGHT, KC_LBRC, KC_RBRC,
+     _______, _______, KC_VOLD, KC_VOLU, KC_MPLY, KC_MNXT,                            _______, _______, _______, _______, KC_MINS, KC_EQL,
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-     _______, KC_F10,  KC_F11,  KC_F12,  _______, _______, _______,          _______, _______, KC_PGDN, _______, KC_END,  _______, _______,
+     _______, _______, _______, _______, _______, _______, _______,          _______, _______, _______, _______, KC_LBRC, KC_RBRC, _______,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
                                     _______, _______, _______,                   _______, _______, _______
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   ),
 
-  [_NAV] = LAYOUT(
+  [_RAISE] = LAYOUT(
   //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
      _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
@@ -64,13 +58,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   ),
 
-  [_RGB] = LAYOUT(
+  [_ADJUST] = LAYOUT(
   //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
      _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, RGB_RMOD,RGB_MOD,
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
      _______, _______, _______, RGB_SAI, _______, _______,                            _______, _______, RGB_VAI, _______, _______, RGB_TOG,
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     _______, _______, RGB_HUD, RGB_SAD, RGB_HUI, _______,                            _______, RGB_SPD, RGB_VAD, RGB_SPI, _______, _______,
+     KC_CAPS, _______, RGB_HUD, RGB_SAD, RGB_HUI, _______,                            _______, RGB_SPD, RGB_VAD, RGB_SPI, _______, _______,
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
      _______, _______, _______, _______, _______, _______, _______,          _______, _______, _______, _______, _______, _______, _______,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
@@ -102,7 +96,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
      _______, _______, _______, _______, _______, _______, _______,          _______, _______, _______, _______, _______, _______, _______,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
-                                    KC_SPC,  _______, _______,                   _______, KC_LGUI, _______
+                                    KC_SPC,  _______, _______,                   _______, KC_RALT, _______
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   )
 };
@@ -116,10 +110,10 @@ enum combos {
 };
 
 const uint16_t PROGMEM df_combo[]         = {KC_D, KC_F, COMBO_END};
-const uint16_t PROGMEM magic_r_combo[]    = {KC_LGUI, TD(TD_CAPS), KC_R, COMBO_END};
-const uint16_t PROGMEM magic_e_combo[]    = {KC_LGUI, TD(TD_CAPS), KC_E, COMBO_END};
-const uint16_t PROGMEM magic_d_combo[]    = {KC_LGUI, TD(TD_CAPS), KC_D, COMBO_END};
-const uint16_t PROGMEM magic_n_combo[]    = {KC_LGUI, TD(TD_CAPS), KC_N, COMBO_END};
+const uint16_t PROGMEM magic_r_combo[]    = {KC_LALT, RALT_T(KC_ENT), KC_R, COMBO_END};
+const uint16_t PROGMEM magic_e_combo[]    = {KC_LALT, RALT_T(KC_ENT), KC_E, COMBO_END};
+const uint16_t PROGMEM magic_d_combo[]    = {KC_LALT, RALT_T(KC_ENT), KC_D, COMBO_END};
+const uint16_t PROGMEM magic_n_combo[]    = {KC_LALT, RALT_T(KC_ENT), KC_N, COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
     [DF_ESC]             = COMBO(df_combo,         KC_ESC),
@@ -192,26 +186,10 @@ void dance_toggle_layer_reset(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
-void dance_caps(qk_tap_dance_state_t *state, void *user_data) {
-    switch (state->count) {
-        case 1:
-            caps_word_set(!caps_word_get());
-            break;
-        case 2:
-            tap_code(KC_CAPS);
-            break;
-    }
-}
-
 qk_tap_dance_action_t tap_dance_actions[] = {
     [TD_LH]   = ACTION_TAP_DANCE_FN(dance_left_hand),
     [TD_TG]   = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_toggle_layer_finished, dance_toggle_layer_reset),
-    [TD_CAPS] = ACTION_TAP_DANCE_FN(dance_caps),
 };
-
-// true if the last press of GRAVE_ESC was shifted (i.e. ALT or SHIFT were pressed), false otherwise.
-// Used to ensure that the correct keycode is released if the key is released.
-static bool grave_esc_was_shifted = false;
 
 static bool rgb_matrix_disabled = false;
 static uint8_t rgb_matrix_config_mode = RGB_MATRIX_SOLID_COLOR;
@@ -221,40 +199,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // Caps word feature, see https://getreuer.info/posts/keyboards/caps-word/index.html
     if (!process_caps_word(keycode, record)) { return false; }
 
-    if (keycode == MO_FN) {
+    if (keycode == MO(_LOWER)) {
         if (record->event.pressed) {
-            layer_on(_FN);
+            layer_on(_LOWER);
         } else {
-            layer_off(_FN);
+            layer_off(_LOWER);
         }
-        update_tri_layer(_FN, _NAV, _RGB);
+        update_tri_layer(_LOWER, _RAISE, _ADJUST);
         return false;
     }
 
-    if (keycode == MO_NAV) {
+    if (keycode == MO(_RAISE)) {
         if (record->event.pressed) {
-            layer_on(_NAV);
+            layer_on(_RAISE);
         } else {
-            layer_off(_NAV);
+            layer_off(_RAISE);
         }
-        update_tri_layer(_FN, _NAV, _RGB);
-        return false;
-    }
-
-    // Adapted from quantum/process_keycode/process_grave_esc.c, except consider GRAVE_ESC shifted if
-    // ALT is pressed (instead of GUI) to accommodate a physical Windows-style keyboard layout (CTRL, GUI, ALT)
-    // with GUI and ALT swapped in macOS.
-    if (keycode == GRAVE_ESC) {
-        const uint8_t mods = get_mods();
-        uint8_t shifted = mods & MOD_MASK_SA;
-
-        if (record->event.pressed) {
-            grave_esc_was_shifted = shifted;
-            add_key(shifted ? KC_GRAVE : KC_ESCAPE);
-        } else {
-            del_key(grave_esc_was_shifted ? KC_GRAVE : KC_ESCAPE);
-        }
-        send_keyboard_report();
+        update_tri_layer(_LOWER, _RAISE, _ADJUST);
         return false;
     }
 
@@ -352,7 +313,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         RGB_MATRIX_INDICATOR_SET_COLOR(59, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // old space key
     }
     if (custom_state.caps_lock) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(58, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // caps key
+        RGB_MATRIX_INDICATOR_SET_COLOR(12, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // caps key
     }
     if (custom_state.caps_word) {
         RGB_MATRIX_INDICATOR_SET_COLOR(23, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS); // left shift
