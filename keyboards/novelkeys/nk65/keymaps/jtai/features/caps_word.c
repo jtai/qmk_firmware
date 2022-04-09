@@ -20,6 +20,30 @@
 
 static bool caps_word_active = false;
 
+// Many keyboards enable the Command feature, which by default is also activated
+// by Left Shift + Right Shift. It can be configured to use a different key
+// combination by defining IS_COMMAND(). We make a non-fatal warning if Command
+// is enabled but IS_COMMAND() is *not* defined.
+#if defined(COMMAND_ENABLE) && !defined(IS_COMMAND)
+#pragma message "Caps Word and Command should not be enabled at the same time, since both use the Left Shift + Right Shift key combination. Please disable Command, or ensure that `IS_COMMAND` is not set to (get_mods() == MOD_MASK_SHIFT)."
+#endif  // defined(COMMAND_ENABLE) && !defined(IS_COMMAND)
+
+#if CAPS_WORD_IDLE_TIMEOUT > 0
+#if CAPS_WORD_IDLE_TIMEOUT < 100 || CAPS_WORD_IDLE_TIMEOUT > 30000
+// Constrain timeout to a sensible range. With the 16-bit timer, the longest
+// representable timeout is 32768 ms, rounded here to 30000 ms = half a minute.
+#error "caps_word: CAPS_WORD_IDLE_TIMEOUT must be between 100 and 30000 ms"
+#endif
+
+static uint16_t idle_timer = 0;
+
+void caps_word_task(void) {
+  if (caps_word_active && timer_expired(timer_read(), idle_timer)) {
+    caps_word_set(false);
+  }
+}
+#endif  // CAPS_WORD_IDLE_TIMEOUT > 0
+
 bool process_caps_word(uint16_t keycode, keyrecord_t* record) {
 #ifndef NO_ACTION_ONESHOT
   const uint8_t mods = get_mods() | get_oneshot_mods();
@@ -29,11 +53,15 @@ bool process_caps_word(uint16_t keycode, keyrecord_t* record) {
 
   if (!caps_word_active) {
     // Pressing both shift keys at the same time enables caps word.
-    if ((mods & MOD_MASK_SHIFT) == MOD_MASK_SHIFT) {
+    if (mods == MOD_MASK_SHIFT) {
       caps_word_set(true);  // Activate Caps Word.
       return false;
     }
     return true;
+  } else {
+#if CAPS_WORD_IDLE_TIMEOUT > 0
+    idle_timer = record->event.time + CAPS_WORD_IDLE_TIMEOUT;
+#endif  // CAPS_WORD_IDLE_TIMEOUT > 0
   }
 
   if (!record->event.pressed) { return true; }
@@ -41,11 +69,11 @@ bool process_caps_word(uint16_t keycode, keyrecord_t* record) {
   if (!(mods & ~MOD_MASK_SHIFT)) {
     switch (keycode) {
       // Ignore MO, TO, TG, TT, and OSL layer switch keys.
-      case QK_MOMENTARY ... QK_MOMENTARY + 255:
-      case QK_TO ... QK_TO + 255:
-      case QK_TOGGLE_LAYER ... QK_TOGGLE_LAYER + 255:
-      case QK_LAYER_TAP_TOGGLE ... QK_LAYER_TAP_TOGGLE + 255:
-      case QK_ONE_SHOT_LAYER ... QK_ONE_SHOT_LAYER + 255:
+      case QK_MOMENTARY ... QK_MOMENTARY_MAX:
+      case QK_TO ... QK_TO_MAX:
+      case QK_TOGGLE_LAYER ... QK_TOGGLE_LAYER_MAX:
+      case QK_LAYER_TAP_TOGGLE ... QK_LAYER_TAP_TOGGLE_MAX:
+      case QK_ONE_SHOT_LAYER ... QK_ONE_SHOT_LAYER_MAX:
         return true;
 
 #ifndef NO_ACTION_TAPPING
@@ -74,7 +102,9 @@ bool process_caps_word(uint16_t keycode, keyrecord_t* record) {
 #endif  // SWAP_HANDS_ENABLE
     }
 
+    clear_weak_mods();
     if (caps_word_press_user(keycode)) {
+      send_keyboard_report();
       return true;
     }
   }
@@ -90,6 +120,12 @@ void caps_word_set(bool active) {
 #ifndef NO_ACTION_ONESHOT
       clear_oneshot_mods();
 #endif  // NO_ACTION_ONESHOT
+#if CAPS_WORD_IDLE_TIMEOUT > 0
+      idle_timer = timer_read() + CAPS_WORD_IDLE_TIMEOUT;
+#endif  // CAPS_WORD_IDLE_TIMEOUT > 0
+    } else {
+      // Make sure weak shift is off.
+      unregister_weak_mods(MOD_BIT(KC_LSFT));
     }
 
     caps_word_active = active;
@@ -105,13 +141,14 @@ __attribute__((weak)) bool caps_word_press_user(uint16_t keycode) {
   switch (keycode) {
     // Keycodes that continue Caps Word, with shift applied.
     case KC_A ... KC_Z:
+    case KC_MINS:
       add_weak_mods(MOD_BIT(KC_LSFT));  // Apply shift to the next key.
       return true;
 
     // Keycodes that continue Caps Word, without shifting.
     case KC_1 ... KC_0:
     case KC_BSPC:
-    case KC_MINS:
+    case KC_DEL:
     case KC_UNDS:
       return true;
 

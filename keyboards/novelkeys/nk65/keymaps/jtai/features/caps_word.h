@@ -25,15 +25,40 @@
 // If your shift keys are mod-taps, activate Caps Word by holding both shift
 // mod-tap keys until the tapping term, release them, then begin typing.
 //
+// Optionally, Caps Word may be configured to deactivate if the keyboard is idle
+// for some time. This is useful to mitigate unintended shifting when you get
+// interrupted or switch to the mouse while Caps Word is active. In your
+// config.h, define `CAPS_WORD_IDLE_TIMEOUT` with a time in milliseconds:
+//
+//   #define CAPS_WORD_IDLE_TIMEOUT 5000  // Turn off Caps Word after 5 seconds.
+//
+// and in your keymap.c, define (or add to) `matrix_scan_user()` as
+//
+//   void matrix_scan_user(void) {
+//     caps_word_task();
+//     // Other tasks...
+//   }
+//
 // For full documentation, see
 // https://getreuer.info/posts/keyboards/caps-word
 
 #pragma once
 
-#include QMK_KEYBOARD_H
+#include "quantum.h"
 
 // Call this function from `process_record_user()` to implement Caps Word.
 bool process_caps_word(uint16_t keycode, keyrecord_t* record);
+
+// If CAPS_WORD_IDLE_TIMEOUT is set, call `caps_word_task()` from
+// `matrix_scan_user()` as described above.
+//
+// If CAPS_WORD_IDLE_TIMEOUT isn't set, calling this function has no effect (but
+// will still compile).
+#if CAPS_WORD_IDLE_TIMEOUT > 0
+void caps_word_task(void);
+#else
+static inline void caps_word_task(void) {}
+#endif
 
 // Activates or deactivates Caps Word. For instance activate Caps Word with a
 // combo by defining a `COMBO_ACTION` that calls `caps_word_set(true)`:
@@ -78,13 +103,14 @@ void caps_word_set_user(bool active);
 //     switch (keycode) {
 //       // Keycodes that continue Caps Word, with shift applied.
 //       case KC_A ... KC_Z:
+//       case KC_MINS:
 //         add_weak_mods(MOD_BIT(KC_LSFT));  // Apply shift to the next key.
 //         return true;
 //
 //       // Keycodes that continue Caps Word, without shifting.
 //       case KC_1 ... KC_0:
 //       case KC_BSPC:
-//       case KC_MINS:
+//       case KC_DEL:
 //       case KC_UNDS:
 //         return true;
 //
