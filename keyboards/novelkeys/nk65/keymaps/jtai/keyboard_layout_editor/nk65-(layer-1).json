@@ -38,15 +38,7 @@
     },
     "Q",
     "W",
-    {
-      "t": "#ffffff",
-      "a": 6
-    },
-    "<i class='fa fa-volume-up'></i>",
-    {
-      "t": "#727474",
-      "a": 4
-    },
+    "E",
     "R",
     "T",
     "Y",
@@ -87,12 +79,12 @@
       "a": 4
     },
     "A",
-    "S",
     {
       "t": "#ffffff",
       "a": 6
     },
     "<i class='fa fa-volume-down'></i>",
+    "<i class='fa fa-volume-up'></i>",
     {
       "f": 2
     },
