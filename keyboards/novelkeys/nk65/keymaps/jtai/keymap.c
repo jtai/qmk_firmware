@@ -27,17 +27,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 [1] = LAYOUT_65_ansi( /* Missing keys, Media keys, Extra arrow keys */
     KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,  KC_INS,\
-    KC_TRNS, KC_TRNS, KC_TRNS, KC_VOLU, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_UP,   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_PSCR,\
-    KC_TRNS, KC_TRNS, KC_TRNS, KC_VOLD, KC_MPLY, KC_MNXT, KC_TRNS, KC_LEFT, KC_DOWN, KC_RGHT, KC_TRNS, KC_TRNS,          KC_TRNS, KC_SLCK,\
-    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS, KC_PAUS,\
-    KC_TRNS, KC_TRNS, KC_TRNS,                KC_TRNS,                               KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
+    _______, _______, _______, _______, _______, _______, _______, _______, KC_UP,   _______, _______, _______, _______, _______, KC_PSCR,\
+    _______, _______, KC_VOLD, KC_VOLU, KC_MPLY, KC_MNXT, _______, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______,          _______, KC_SLCK,\
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, KC_PAUS,\
+    _______, _______, _______,                _______,                               _______, _______, _______, _______, _______, _______),
 
 [2] = LAYOUT_65_ansi( /* Caps lock, LED control, NKRO toggle, RESET */
-    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, EF_DEC,  EF_INC,  KC_TRNS, KC_TRNS,\
-    KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, RESET,   KC_TRNS,\
-    KC_CAPS, H1_DEC,  H1_INC,  S1_DEC,  S1_INC,  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS, KC_TRNS,\
-    KC_TRNS, H2_DEC,  H2_INC,  S2_DEC,  S2_INC,  KC_TRNS, NK_TOGG, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          BR_INC,  KC_TRNS,\
-    KC_TRNS, KC_TRNS, KC_TRNS,                KC_TRNS,                               KC_TRNS, KC_TRNS, KC_TRNS, ES_DEC,  BR_DEC,  ES_INC),
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, EF_DEC,  EF_INC,  _______, _______,\
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, RESET,   _______,\
+    KC_CAPS, H1_DEC,  H1_INC,  S1_DEC,  S1_INC,  _______, _______, _______, _______, _______, _______, _______,          _______, _______,\
+    _______, H2_DEC,  H2_INC,  S2_DEC,  S2_INC,  _______, NK_TOGG, _______, _______, _______, _______, _______,          BR_INC,  _______,\
+    _______, _______, _______,                _______,                               _______, _______, _______, ES_DEC,  BR_DEC,  ES_INC),
 };
 
 enum combos {
