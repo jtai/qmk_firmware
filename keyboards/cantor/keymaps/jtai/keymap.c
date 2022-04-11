@@ -6,6 +6,10 @@
 #define _RAISE 2
 #define _ADJUST 3
 
+enum tap_dances {
+    TD_LWR,
+};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // generally try to keep keys where they are on a "normal" keyboard (at least relatively, e.g., order of esc/tab/shift)
     // for modifiers, keep shift keys in normal position, but move main modifiers to thumb keys, and use mod tap for LCTL/HYPER modifiers
@@ -13,7 +17,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_GESC, KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                            KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
  LCTL_T(KC_TAB), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                            KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, HYPR_T(KC_QUOT),
         KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                            KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,
-                                            KC_LALT, KC_LGUI, MO(_LOWER), MO(_RAISE), RGUI_T(KC_SPC), RALT_T(KC_ENT)
+                                            KC_LALT, KC_LGUI, TD(TD_LWR), MO(_RAISE), KC_SPC,  KC_ENT
     ),
 
     // number/symbols and media layer, again try to keep symbols in similar positions (or at least relative positions) as a "normal" keyboard
@@ -49,16 +53,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
     }
 
-    if (keycode == MO(_LOWER)) {
-        if (record->event.pressed) {
-            layer_on(_LOWER);
-        } else {
-            layer_off(_LOWER);
-        }
-        update_tri_layer(_LOWER, _RAISE, _ADJUST);
-        return false;
-    }
-
     if (keycode == MO(_RAISE)) {
         if (record->event.pressed) {
             layer_on(_RAISE);
@@ -82,6 +76,74 @@ bool get_ignore_mod_tap_interrupt(uint16_t keycode, keyrecord_t *record) {
             return false;
         default:
             return true;
+    }
+}
+
+static bool dance_lower_gui_hold = false;
+static bool dance_lower_alt_hold = false;
+
+void dance_lower_each(qk_tap_dance_state_t *state, void *user_data) {
+    layer_on(_LOWER);
+    update_tri_layer(_LOWER, _RAISE, _ADJUST);
+}
+
+void dance_lower_finished(qk_tap_dance_state_t *state, void *user_data) {
+    switch (state->count) {
+        case 2:
+            dance_lower_gui_hold = true;
+            register_code(KC_LGUI);
+            caps_word_set(false);
+            break;
+        case 3:
+            dance_lower_alt_hold = true;
+            register_code(KC_LALT);
+            caps_word_set(false);
+            break;
+        case 4:
+            dance_lower_gui_hold = true;
+            dance_lower_alt_hold = true;
+            register_code(KC_LGUI);
+            register_code(KC_LALT);
+            caps_word_set(false);
+            break;
+    }
+}
+
+void dance_lower_reset(qk_tap_dance_state_t *state, void *user_data) {
+    if (dance_lower_alt_hold) {
+        dance_lower_alt_hold = false;
+        unregister_code(KC_LALT);
+    }
+    if (dance_lower_gui_hold) {
+        dance_lower_gui_hold = false;
+        unregister_code(KC_LGUI);
+    }
+    layer_off(_LOWER);
+    update_tri_layer(_LOWER, _RAISE, _ADJUST);
+}
+
+qk_tap_dance_action_t tap_dance_actions[] = {
+    [TD_LWR] = ACTION_TAP_DANCE_FN_ADVANCED(dance_lower_each, dance_lower_finished, dance_lower_reset),
+};
+
+bool caps_word_press_user(uint16_t keycode) {
+    switch (keycode) {
+        // Keycodes that continue Caps Word, with shift applied.
+        case KC_A ... KC_Z:
+        case KC_MINS:
+            add_weak_mods(MOD_BIT(KC_LSFT));  // Apply shift to the next key.
+            return true;
+
+        // Keycodes that continue Caps Word, without shifting.
+        case QK_TAP_DANCE ... QK_TAP_DANCE_MAX:
+        case KC_1 ... KC_0:
+        case KC_BSPC:
+        case KC_DEL:
+        case KC_UNDS:
+            return true;
+
+        default:
+            return false;  // Deactivate Caps Word.
     }
 }
 
