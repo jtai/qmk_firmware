@@ -28,8 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define GRAVE_ESC_ALT_OVERRIDE
 #define GRAVE_ESC_CTRL_OVERRIDE
 
-// configure mod tap
-#define IGNORE_MOD_TAP_INTERRUPT
+// configure tap hold (tap dance)
+#define TAPPING_TERM_PER_KEY
 
 // configure combos
 #define COMBO_COUNT 5
