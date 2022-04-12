@@ -12,6 +12,7 @@
 enum tap_dances {
     TD_LH,
     TD_TG,
+    TD_LWR,
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -26,7 +27,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
      KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    TD(TD_LH),       TD(TD_TG),KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
-                                    KC_LALT, KC_LGUI, MO(_LOWER),              MO(_RAISE),RGUI_T(KC_SPC),RALT_T(KC_ENT)
+                                    KC_LALT, KC_LGUI, TD(TD_LWR),              MO(_RAISE),KC_SPC,  KC_ENT
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   ),
 
@@ -110,10 +111,10 @@ enum combos {
 };
 
 const uint16_t PROGMEM df_combo[]         = {KC_D, KC_F, COMBO_END};
-const uint16_t PROGMEM magic_r_combo[]    = {KC_LALT, RALT_T(KC_ENT), KC_R, COMBO_END};
-const uint16_t PROGMEM magic_e_combo[]    = {KC_LALT, RALT_T(KC_ENT), KC_E, COMBO_END};
-const uint16_t PROGMEM magic_d_combo[]    = {KC_LALT, RALT_T(KC_ENT), KC_D, COMBO_END};
-const uint16_t PROGMEM magic_n_combo[]    = {KC_LALT, RALT_T(KC_ENT), KC_N, COMBO_END};
+const uint16_t PROGMEM magic_r_combo[]    = {KC_LALT, KC_ENT, KC_R, COMBO_END};
+const uint16_t PROGMEM magic_e_combo[]    = {KC_LALT, KC_ENT, KC_E, COMBO_END};
+const uint16_t PROGMEM magic_d_combo[]    = {KC_LALT, KC_ENT, KC_D, COMBO_END};
+const uint16_t PROGMEM magic_n_combo[]    = {KC_LALT, KC_ENT, KC_N, COMBO_END};
 
 combo_t key_combos[COMBO_COUNT] = {
     [DF_ESC]             = COMBO(df_combo,         KC_ESC),
@@ -186,10 +187,75 @@ void dance_toggle_layer_reset(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
+static bool dance_lower_gui_hold = false;
+static bool dance_lower_alt_hold = false;
+
+void dance_lower_each(qk_tap_dance_state_t *state, void *user_data) {
+    layer_on(_LOWER);
+    update_tri_layer(_LOWER, _RAISE, _ADJUST);
+}
+
+void dance_lower_finished(qk_tap_dance_state_t *state, void *user_data) {
+    switch (state->count) {
+        case 2:
+            dance_lower_gui_hold = true;
+            register_code(KC_LGUI);
+            caps_word_set(false);
+            break;
+        case 3:
+            dance_lower_alt_hold = true;
+            register_code(KC_LALT);
+            caps_word_set(false);
+            break;
+        case 4:
+            dance_lower_gui_hold = true;
+            dance_lower_alt_hold = true;
+            register_code(KC_LGUI);
+            register_code(KC_LALT);
+            caps_word_set(false);
+            break;
+    }
+}
+
+void dance_lower_reset(qk_tap_dance_state_t *state, void *user_data) {
+    if (dance_lower_alt_hold) {
+        dance_lower_alt_hold = false;
+        unregister_code(KC_LALT);
+    }
+    if (dance_lower_gui_hold) {
+        dance_lower_gui_hold = false;
+        unregister_code(KC_LGUI);
+    }
+    layer_off(_LOWER);
+    update_tri_layer(_LOWER, _RAISE, _ADJUST);
+}
+
 qk_tap_dance_action_t tap_dance_actions[] = {
     [TD_LH]   = ACTION_TAP_DANCE_FN(dance_left_hand),
     [TD_TG]   = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_toggle_layer_finished, dance_toggle_layer_reset),
+    [TD_LWR] = ACTION_TAP_DANCE_FN_ADVANCED(dance_lower_each, dance_lower_finished, dance_lower_reset),
 };
+
+bool caps_word_press_user(uint16_t keycode) {
+    switch (keycode) {
+        // Keycodes that continue Caps Word, with shift applied.
+        case KC_A ... KC_Z:
+        case KC_MINS:
+            add_weak_mods(MOD_BIT(KC_LSFT));  // Apply shift to the next key.
+            return true;
+
+        // Keycodes that continue Caps Word, without shifting.
+        case QK_TAP_DANCE ... QK_TAP_DANCE_MAX:
+        case KC_1 ... KC_0:
+        case KC_BSPC:
+        case KC_DEL:
+        case KC_UNDS:
+            return true;
+
+        default:
+            return false;  // Deactivate Caps Word.
+    }
+}
 
 static bool rgb_matrix_disabled = false;
 static uint8_t rgb_matrix_config_mode = RGB_MATRIX_SOLID_COLOR;
@@ -198,16 +264,6 @@ static HSV rgb_matrix_config_hsv = { .h = 0, .s = 0, .v = 0 };
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // Caps word feature, see https://getreuer.info/posts/keyboards/caps-word/index.html
     if (!process_caps_word(keycode, record)) { return false; }
-
-    if (keycode == MO(_LOWER)) {
-        if (record->event.pressed) {
-            layer_on(_LOWER);
-        } else {
-            layer_off(_LOWER);
-        }
-        update_tri_layer(_LOWER, _RAISE, _ADJUST);
-        return false;
-    }
 
     if (keycode == MO(_RAISE)) {
         if (record->event.pressed) {
