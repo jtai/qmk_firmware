@@ -135,6 +135,15 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     }
 }
 
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case TD(TD_LWR):
+            return TAPPING_TERM + 100;
+        default:
+            return TAPPING_TERM;
+    }
+}
+
 void dance_left_hand(qk_tap_dance_state_t *state, void *user_data) {
     switch (state->count) {
         case 1:
@@ -197,6 +206,8 @@ void dance_lower_each(qk_tap_dance_state_t *state, void *user_data) {
 
 void dance_lower_finished(qk_tap_dance_state_t *state, void *user_data) {
     switch (state->count) {
+        case 1:
+            break;
         case 2:
             dance_lower_gui_hold = true;
             register_code(KC_LGUI);
@@ -207,7 +218,7 @@ void dance_lower_finished(qk_tap_dance_state_t *state, void *user_data) {
             register_code(KC_LALT);
             caps_word_set(false);
             break;
-        case 4:
+        default:
             dance_lower_gui_hold = true;
             dance_lower_alt_hold = true;
             register_code(KC_LGUI);
