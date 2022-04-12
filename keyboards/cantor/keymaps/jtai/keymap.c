@@ -79,6 +79,15 @@ bool get_ignore_mod_tap_interrupt(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case TD(TD_LWR):
+            return TAPPING_TERM + 100;
+        default:
+            return TAPPING_TERM;
+    }
+}
+
 static bool dance_lower_gui_hold = false;
 static bool dance_lower_alt_hold = false;
 
@@ -89,6 +98,8 @@ void dance_lower_each(qk_tap_dance_state_t *state, void *user_data) {
 
 void dance_lower_finished(qk_tap_dance_state_t *state, void *user_data) {
     switch (state->count) {
+        case 1:
+            break;
         case 2:
             dance_lower_gui_hold = true;
             register_code(KC_LGUI);
@@ -99,7 +110,7 @@ void dance_lower_finished(qk_tap_dance_state_t *state, void *user_data) {
             register_code(KC_LALT);
             caps_word_set(false);
             break;
-        case 4:
+        default:
             dance_lower_gui_hold = true;
             dance_lower_alt_hold = true;
             register_code(KC_LGUI);

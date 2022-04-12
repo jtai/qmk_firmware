@@ -12,5 +12,6 @@
 #define GRAVE_ESC_ALT_OVERRIDE
 #define GRAVE_ESC_CTRL_OVERRIDE
 
-// configure mod tap
+// configure tap hold (tap dance, mod tap)
 #define IGNORE_MOD_TAP_INTERRUPT_PER_KEY
+#define TAPPING_TERM_PER_KEY
