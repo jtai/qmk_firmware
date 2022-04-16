@@ -6,6 +6,10 @@
 #define _RAISE 2
 #define _ADJUST 3
 
+enum custom_keycodes {
+    KC_SPAM_BSPC = SAFE_RANGE,
+};
+
 enum tap_dances {
     TD_LWR,
 };
@@ -40,7 +44,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     // function layer for F1..F12 keys and caps lock, as well as keyboard functions like reset and n-key rollover toggle
     [_ADJUST] = LAYOUT_split_3x6_3(
-        _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                           KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  _______,
+        _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                           KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_SPAM_BSPC,
         KC_CAPS, KC_F11,  KC_F12,  _______, _______, _______,                         _______, _______, _______, _______, _______, _______,
         _______, _______, _______, _______, _______, RESET,                           NK_TOGG, _______, _______, _______, _______, _______,
                                             _______, _______, _______,       _______, _______, _______
@@ -53,19 +57,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
     }
 
-    if (keycode == MO(_RAISE)) {
-        if (record->event.pressed) {
-            layer_on(_RAISE);
-        } else {
-            layer_off(_RAISE);
-        }
-        update_tri_layer(_LOWER, _RAISE, _ADJUST);
-        return false;
+    switch (keycode) {
+        case MO(_RAISE):
+            if (record->event.pressed) {
+                layer_on(_RAISE);
+            } else {
+                layer_off(_RAISE);
+            }
+            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+            return false;
+
+        case KC_SPAM_BSPC:
+            if (record->event.pressed) {
+                for (uint8_t i = 0; i < 24; i++) {
+                    tap_code(KC_BSPC);
+                }
+            }
+            return false;
+
+        // TODO: intercept RESET and turn on both indicator LEDs
+
+        default:
+            return true;
     }
-
-    // TODO: intercept RESET and turn on both indicator LEDs
-
-    return true;
 }
 
 bool get_ignore_mod_tap_interrupt(uint16_t keycode, keyrecord_t *record) {
