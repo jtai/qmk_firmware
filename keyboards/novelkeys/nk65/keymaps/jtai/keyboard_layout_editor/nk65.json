@@ -1,0 +1,277 @@
+[
+  {
+    "name": "NK65"
+  },
+  [
+    {
+      "c": "#393b3b",
+      "t": "#ffffff\n\n\n#b52193",
+      "fa": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    "~\nEsc\n\n`",
+    "!\n1\n\nF1",
+    "@\n2\n\nF2",
+    "#\n3\n\nF3",
+    "$\n4\n\nF4",
+    "%\n5\n\nF5",
+    "^\n6\n\nF6",
+    "&\n7\n\nF7",
+    "*\n8\n\nF8",
+    "(\n9\n\nF9",
+    ")\n0\n\nF10",
+    {
+      "t": "#ffffff\n\n#d02f1c\n#b52193",
+      "fa": [
+        0,
+        0,
+        1,
+        2
+      ]
+    },
+    "_\n-\nEffect-\nF11",
+    "+\n=\nEffect+\nF12",
+    {
+      "t": "#ffffff\n\n\n#b52193",
+      "w": 2
+    },
+    "\n\n\nDelete\n\n\nBackspace",
+    "\n\n\nInsert\n\n\nHome"
+  ],
+  [
+    {
+      "t": "#ffffff",
+      "a": 6,
+      "w": 1.5
+    },
+    "Tab",
+    {
+      "a": 4
+    },
+    "Q",
+    "W",
+    "E",
+    "R",
+    "T",
+    "Y",
+    "U",
+    {
+      "t": "#ffffff\n\n\n#b52193"
+    },
+    "I\n\n\n↑",
+    {
+      "t": "#ffffff"
+    },
+    "O",
+    "P",
+    "{\n[",
+    "}\n]",
+    {
+      "t": "#ffffff\n\n#d02f1c",
+      "w": 1.5
+    },
+    "|\n\\\nRESET",
+    {
+      "t": "#ffffff\n\n\n#b52193"
+    },
+    "\n\n\nPrtSc\n\n\nEnd"
+  ],
+  [
+    {
+      "t": "#b52193\n\n#d02f1c",
+      "w": 1.75
+    },
+    "\n\nCaps Lock\n\n\n\nRaise",
+    {
+      "t": "#ffffff\n\n#d02f1c"
+    },
+    "A\n\nHue1-",
+    {
+      "t": "#ffffff\n\n#d02f1c\n#b52193",
+      "fa": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    "S\n\nHue1+\n<i class='fa fa-volume-down'></i>",
+    {
+      "t": "#ffffff\n\n#d02f1c\n#b52193\n\n\n\n#0cba00",
+      "fa": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "D\n\nSat1-\n<i class='fa fa-volume-up'></i>\n\n\n\nEsc",
+    {
+      "fa": [
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "F\n\nSat1+\n<i class='fa fa-play'></i><i class='fa fa-pause'></i>\n\n\n\nEsc",
+    {
+      "t": "#ffffff\n\n\n#b52193",
+      "fa": [
+        0,
+        0,
+        1,
+        2
+      ]
+    },
+    "G\n\n\n<i class='fa fa-forward'></i>",
+    {
+      "t": "#ffffff"
+    },
+    "H",
+    {
+      "t": "#ffffff\n\n\n#b52193",
+      "f": 3
+    },
+    "J\n\n\n←",
+    "K\n\n\n↓",
+    {
+      "f": 3
+    },
+    "L\n\n\n→",
+    {
+      "t": "#ffffff"
+    },
+    ":\n;",
+    "\"\n'",
+    {
+      "a": 6,
+      "w": 2.25
+    },
+    "Enter",
+    {
+      "t": "#ffffff\n\n\n#b52193",
+      "a": 4
+    },
+    "\n\n\nScroll\n\n\nPgUp"
+  ],
+  [
+    {
+      "t": "#ffffff\n\n#0060f2",
+      "w": 2.25
+    },
+    "\n\nCaps Word\n\n\n\nShift",
+    {
+      "t": "#ffffff\n\n#d02f1c"
+    },
+    "Z\n\nHue2-",
+    "X\n\nHue2+",
+    "C\n\nSat2-",
+    "V\n\nSat2+",
+    {
+      "t": "#ffffff"
+    },
+    "B",
+    {
+      "t": "#ffffff\n\n\n#d02f1c",
+      "fa": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "N\n\n\nNK_TOGG",
+    {
+      "t": "#ffffff"
+    },
+    "M",
+    "<\n,",
+    ">\n.",
+    "?\n/",
+    {
+      "t": "#ffffff\n\n#0060f2",
+      "w": 1.75
+    },
+    "\n\nCaps Word\n\n\n\nShift",
+    {
+      "t": "#ffffff\n\n#d02f1c",
+      "f": 7,
+      "fa": [
+        0,
+        0,
+        1
+      ]
+    },
+    "↑\n\nBright+",
+    {
+      "t": "#ffffff\n\n\n#b52193",
+      "f": 3,
+      "fa": [
+        0,
+        0,
+        1,
+        2
+      ]
+    },
+    "\n\n\nPause\n\n\nPgDn"
+  ],
+  [
+    {
+      "t": "#ffffff",
+      "a": 6,
+      "w": 1.25
+    },
+    "Ctrl",
+    {
+      "w": 1.25
+    },
+    "Win",
+    {
+      "w": 1.25
+    },
+    "Alt",
+    {
+      "a": 7,
+      "w": 6.25
+    },
+    "",
+    {
+      "a": 6
+    },
+    "Alt",
+    {
+      "t": "#d02f1c"
+    },
+    "Fn",
+    {
+      "t": "#ffffff"
+    },
+    "Ctrl",
+    {
+      "t": "#ffffff\n\n#d02f1c",
+      "a": 4,
+      "f": 7,
+      "fa": [
+        0,
+        0,
+        1
+      ]
+    },
+    "\n\nSpeed-\n\n\n\n←",
+    "↓\n\nBright-",
+    "\n\nSpeed+\n\n\n\n→"
+  ]
+]
