@@ -9,6 +9,10 @@
 #define _NAV_TG 4
 #define _GAME_TG 5
 
+enum custom_keycodes {
+    KC_SPAM_BSPC = SAFE_RANGE,
+};
+
 enum tap_dances {
     TD_LH,
     TD_TG,
@@ -61,9 +65,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_ADJUST] = LAYOUT(
   //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
-     _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, RGB_RMOD,RGB_MOD,
+     _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, KC_SPAM_BSPC,
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     _______, _______, _______, RGB_SAI, _______, _______,                            _______, _______, RGB_VAI, _______, _______, RGB_TOG,
+     _______, _______, _______, RGB_SAI, _______, _______,                            _______, _______, RGB_VAI, RGB_RMOD,RGB_MOD, RGB_TOG,
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
      KC_CAPS, _______, RGB_HUD, RGB_SAD, RGB_HUI, _______,                            _______, RGB_SPD, RGB_VAD, RGB_SPI, _______, _______,
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
@@ -276,55 +280,63 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // Caps word feature, see https://getreuer.info/posts/keyboards/caps-word/index.html
     if (!process_caps_word(keycode, record)) { return false; }
 
-    if (keycode == MO(_RAISE)) {
-        if (record->event.pressed) {
-            layer_on(_RAISE);
-        } else {
-            layer_off(_RAISE);
-        }
-        update_tri_layer(_LOWER, _RAISE, _ADJUST);
-        return false;
-    }
-
-    // RGB should always be enabled, otherwise indicators won't work
-    // See https://docs.qmk.fm/#/feature_rgb_matrix?id=indicators-without-rgb-matrix-effect
-    if (keycode == RGB_TOG) {
-        if (!record->event.pressed) {
-            if (!rgb_matrix_disabled) {
-                // Save current values
-                rgb_matrix_config_mode = rgb_matrix_get_mode();
-                rgb_matrix_config_hsv = rgb_matrix_get_hsv();
-
-                // Pretend off
-                rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
-                rgb_matrix_sethsv_noeeprom(HSV_OFF);
-
-                rgb_matrix_disabled = true;
+    switch (keycode) {
+        case MO(_RAISE):
+            if (record->event.pressed) {
+                layer_on(_RAISE);
             } else {
-                // Restore original values
-                rgb_matrix_mode_noeeprom(rgb_matrix_config_mode);
-                rgb_matrix_sethsv_noeeprom(rgb_matrix_config_hsv.h, rgb_matrix_config_hsv.s, rgb_matrix_config_hsv.v);
-
-                rgb_matrix_disabled = false;
+                layer_off(_RAISE);
             }
-        }
-        return false;
-    }
+            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+            return false;
 
-    // Activate LEDs to indicate we're in bootloader mode
-    if (keycode == RESET) {
-        if (record->event.pressed) {
-            rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_SOLID_COLOR_UNDERGLOW);
-            rgb_matrix_sethsv_noeeprom(HSV_RED);
-        } else {
-            // Wait until key is released before entering bootloader mode so that the LEDs have time to update
-            // (and sync to the other half)
-            reset_keyboard();
-        }
-        return false;
-    }
+        case KC_SPAM_BSPC:
+            if (record->event.pressed) {
+                for (uint8_t i = 0; i < 24; i++) {
+                    tap_code(KC_BSPC);
+                }
+            }
+            return false;
 
-    return true;
+        // RGB should always be enabled, otherwise indicators won't work
+        // See https://docs.qmk.fm/#/feature_rgb_matrix?id=indicators-without-rgb-matrix-effect
+        case RGB_TOG:
+            if (!record->event.pressed) {
+                if (!rgb_matrix_disabled) {
+                    // Save current values
+                    rgb_matrix_config_mode = rgb_matrix_get_mode();
+                    rgb_matrix_config_hsv = rgb_matrix_get_hsv();
+
+                    // Pretend off
+                    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
+                    rgb_matrix_sethsv_noeeprom(HSV_OFF);
+
+                    rgb_matrix_disabled = true;
+                } else {
+                    // Restore original values
+                    rgb_matrix_mode_noeeprom(rgb_matrix_config_mode);
+                    rgb_matrix_sethsv_noeeprom(rgb_matrix_config_hsv.h, rgb_matrix_config_hsv.s, rgb_matrix_config_hsv.v);
+
+                    rgb_matrix_disabled = false;
+                }
+            }
+            return false;
+
+        // Activate LEDs to indicate we're in bootloader mode
+        case RESET:
+            if (record->event.pressed) {
+                rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_SOLID_COLOR_UNDERGLOW);
+                rgb_matrix_sethsv_noeeprom(HSV_RED);
+            } else {
+                // Wait until key is released before entering bootloader mode so that the LEDs have time to update
+                // (and sync to the other half)
+                reset_keyboard();
+            }
+            return false;
+
+        default:
+            return true;
+    }
 }
 
 typedef union {
