@@ -1,5 +1,4 @@
 #include QMK_KEYBOARD_H
-#include "features/caps_word.h"
 
 #define _QWERTY 0
 #define _COLEMAK 1
@@ -60,11 +59,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // Caps word feature, see https://getreuer.info/posts/keyboards/caps-word/index.html
-    if (!process_caps_word(keycode, record)) {
-        return false;
-    }
-
     switch (keycode) {
         case MO(_RAISE):
             if (record->event.pressed) {
@@ -125,19 +119,19 @@ void dance_lower_finished(qk_tap_dance_state_t *state, void *user_data) {
         case 2:
             dance_lower_gui_hold = true;
             register_code(KC_LGUI);
-            caps_word_set(false);
+            caps_word_off();
             break;
         case 3:
             dance_lower_alt_hold = true;
             register_code(KC_LALT);
-            caps_word_set(false);
+            caps_word_off();
             break;
         default:
             dance_lower_gui_hold = true;
             dance_lower_alt_hold = true;
             register_code(KC_LGUI);
             register_code(KC_LALT);
-            caps_word_set(false);
+            caps_word_off();
             break;
     }
 }
