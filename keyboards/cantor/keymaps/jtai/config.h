@@ -15,3 +15,6 @@
 // configure tap hold (tap dance, mod tap)
 #define IGNORE_MOD_TAP_INTERRUPT_PER_KEY
 #define TAPPING_TERM_PER_KEY
+
+// configure caps word
+#define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
