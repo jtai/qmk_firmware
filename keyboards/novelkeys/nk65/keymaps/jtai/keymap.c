@@ -68,6 +68,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             del_key(grave_esc_was_shifted ? KC_GRAVE : KC_ESCAPE);
         }
         send_keyboard_report();
+        caps_word_off();
         return false;
     }
 
