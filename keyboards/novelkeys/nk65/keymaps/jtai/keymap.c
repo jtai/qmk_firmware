@@ -15,6 +15,7 @@
  */
 #include QMK_KEYBOARD_H
 #include "drivers/led/issi/is31fl3733.h"
+#include "keyboards/wilba_tech/wt_rgb_backlight.h"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [0] = LAYOUT_65_ansi( /* Base */
@@ -26,7 +27,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 [1] = LAYOUT_65_ansi( /* Missing keys, media keys, LED control, board functions */
     KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,  KC_INS,\
-    _______, H1_DEC,  H1_INC,  S1_DEC,  S1_INC,  _______, _______, _______, _______, _______, _______, EF_DEC,  EF_INC,  RESET,   KC_PSCR,\
+    _______, H1_DEC,  H1_INC,  S1_DEC,  S1_INC,  _______, _______, _______, _______, _______, _______, EF_DEC,  EF_INC,  QK_BOOT, KC_PSCR,\
     KC_CAPS, _______, KC_VOLD, KC_VOLU, KC_MPLY, KC_MNXT, _______, _______, _______, _______, _______, _______,          _______, KC_SLCK,\
     _______, H2_DEC,  H2_INC,  S2_DEC,  S2_INC,  _______, NK_TOGG, _______, _______, _______, _______, _______,          BR_INC,  KC_PAUS,\
     _______, _______, _______,                   _______,                            _______, _______, _______, ES_DEC,  BR_DEC,  ES_INC),
@@ -63,6 +64,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         send_keyboard_report();
         caps_word_off();
         return false;
+    }
+
+    if (keycode == QK_BOOT) {
+        IS31FL3733_set_color( 6+64-1, 0, 255, 0 );
+        backlight_update_pwm_buffers();
+        return true;
     }
 
     return true;
