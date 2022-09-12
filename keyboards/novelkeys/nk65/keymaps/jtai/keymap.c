@@ -14,7 +14,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-#include "features/caps_word.h"
 #include "drivers/led/issi/is31fl3733.h"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -55,9 +54,6 @@ combo_t key_combos[COMBO_COUNT] = {
 static bool grave_esc_was_shifted = false;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // Caps word feature, see https://getreuer.info/posts/keyboards/caps-word/index.html
-    if (!process_caps_word(keycode, record)) { return false; }
-
     // Adapted from quantum/process_keycode/process_grave_esc.c, except consider GRAVE_ESC shifted if
     // ALT is pressed (instead of GUI) to accommodate a physical Windows-style keyboard layout (CTRL, GUI, ALT)
     // with GUI and ALT swapped in macOS.
