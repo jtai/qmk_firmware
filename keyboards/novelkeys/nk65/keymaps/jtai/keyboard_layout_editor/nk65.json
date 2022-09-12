@@ -212,7 +212,7 @@
         1
       ]
     },
-    "↑\n\n\nBright+",
+    "\n\n\nBright+\n\n\n↑",
     {
       "f": 3,
       "fa": [
@@ -268,7 +268,7 @@
       ]
     },
     "\n\n\nSpeed-\n\n\n←",
-    "↓\n\n\nBright-",
+    "\n\n\nBright-\n\n\n↓",
     "\n\n\nSpeed+\n\n\n→"
   ]
 ]
