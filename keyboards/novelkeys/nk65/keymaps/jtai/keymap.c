@@ -81,3 +81,19 @@ void caps_word_set_user(bool active) {
     }
   }
 }
+
+// Ensure host LED update is aware of caps word
+bool led_update_user(led_t led_state) {
+    if (led_state.caps_lock) {
+        IS31FL3733_set_color( 7+64-1, 0, 255, 0 );
+    } else {
+        if (is_caps_word_on()) {
+            IS31FL3733_set_color( 7+64-1, 0, 255, 0 );
+        } else {
+            IS31FL3733_set_color( 7+64-1, 0, 0, 0 );
+        }
+    }
+
+    // prevent kb version from running
+    return false;
+}
