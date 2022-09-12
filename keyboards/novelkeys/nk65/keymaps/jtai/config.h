@@ -12,3 +12,6 @@
 // configure combos
 #define COMBO_COUNT 1
 #define COMBO_TERM 25
+
+// configure caps word
+#define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
