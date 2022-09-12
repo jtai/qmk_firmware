@@ -1,4 +1,4 @@
 SPACE_CADET_ENABLE = no
 GRAVE_ESC_ENABLE = no
 COMBO_ENABLE = yes
-SRC += features/caps_word.c
+CAPS_WORD_ENABLE = yes
