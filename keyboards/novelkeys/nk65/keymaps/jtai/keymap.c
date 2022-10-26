@@ -19,7 +19,7 @@
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [0] = LAYOUT_65_ansi( /* Base */
-    KC_GESC, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC, KC_HOME,\
+    QK_GESC, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC, KC_HOME,\
     KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS, KC_END,\
     KC_HYPR, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,  KC_PGUP,\
     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,          KC_UP,   KC_PGDN,\
@@ -28,7 +28,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [1] = LAYOUT_65_ansi( /* Missing keys, media keys, LED control, board functions */
     KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,  KC_INS,\
     _______, H1_DEC,  H1_INC,  S1_DEC,  S1_INC,  _______, _______, _______, _______, _______, _______, EF_DEC,  EF_INC,  QK_BOOT, KC_PSCR,\
-    KC_CAPS, _______, KC_VOLD, KC_VOLU, KC_MPLY, KC_MNXT, _______, _______, _______, _______, _______, _______,          _______, KC_SLCK,\
+    KC_CAPS, _______, KC_VOLD, KC_VOLU, KC_MPLY, KC_MNXT, _______, _______, _______, _______, _______, _______,          _______, KC_SCRL,\
     _______, H2_DEC,  H2_INC,  S2_DEC,  S2_INC,  _______, NK_TOGG, _______, _______, _______, _______, _______,          BR_INC,  KC_PAUS,\
     _______, _______, _______,                   _______,                            _______, _______, _______, ES_DEC,  BR_DEC,  ES_INC),
 };
@@ -43,15 +43,15 @@ combo_t key_combos[COMBO_COUNT] = {
     [DF_ESC] = COMBO(df_combo, KC_ESC),
 };
 
-// true if the last press of GRAVE_ESC was shifted (i.e. ALT or SHIFT were pressed), false otherwise.
+// true if the last press of QK_GRAVE_ESCAPE was shifted (i.e. ALT or SHIFT were pressed), false otherwise.
 // Used to ensure that the correct keycode is released if the key is released.
 static bool grave_esc_was_shifted = false;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // Adapted from quantum/process_keycode/process_grave_esc.c, except consider GRAVE_ESC shifted if
+    // Adapted from quantum/process_keycode/process_grave_esc.c, except consider QK_GRAVE_ESCAPE shifted if
     // ALT is pressed (instead of GUI) to accommodate a physical Windows-style keyboard layout (CTRL, GUI, ALT)
     // with GUI and ALT swapped in macOS.
-    if (keycode == GRAVE_ESC) {
+    if (keycode == QK_GRAVE_ESCAPE) {
         const uint8_t mods = get_mods();
         uint8_t shifted = mods & MOD_MASK_SA;
 
