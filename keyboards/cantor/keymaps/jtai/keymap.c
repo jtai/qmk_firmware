@@ -76,14 +76,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
-bool get_ignore_mod_tap_interrupt(uint16_t keycode, keyrecord_t *record) {
+bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         // allow mod tap interrupt for ctrl
         // tab is typically typed on its own, so chances of rolling are low
         case LCTL_T(KC_TAB):
-            return false;
-        default:
             return true;
+        default:
+            return false;
     }
 }
 
