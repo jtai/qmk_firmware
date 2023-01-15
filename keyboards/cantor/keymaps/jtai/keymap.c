@@ -99,12 +99,12 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 static bool dance_lower_gui_hold = false;
 static bool dance_lower_alt_hold = false;
 
-void dance_lower_each(qk_tap_dance_state_t *state, void *user_data) {
+void dance_lower_each(tap_dance_state_t *state, void *user_data) {
     layer_on(_LOWER);
     update_tri_layer(_LOWER, _RAISE, _ADJUST);
 }
 
-void dance_lower_finished(qk_tap_dance_state_t *state, void *user_data) {
+void dance_lower_finished(tap_dance_state_t *state, void *user_data) {
     switch (state->count) {
         case 1:
             break;
@@ -128,7 +128,7 @@ void dance_lower_finished(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
-void dance_lower_reset(qk_tap_dance_state_t *state, void *user_data) {
+void dance_lower_reset(tap_dance_state_t *state, void *user_data) {
     if (dance_lower_alt_hold) {
         dance_lower_alt_hold = false;
         unregister_code(KC_LALT);
@@ -141,7 +141,7 @@ void dance_lower_reset(qk_tap_dance_state_t *state, void *user_data) {
     update_tri_layer(_LOWER, _RAISE, _ADJUST);
 }
 
-qk_tap_dance_action_t tap_dance_actions[] = {
+tap_dance_action_t tap_dance_actions[] = {
     [TD_LWR] = ACTION_TAP_DANCE_FN_ADVANCED(dance_lower_each, dance_lower_finished, dance_lower_reset),
 };
 
