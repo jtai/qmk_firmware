@@ -13,7 +13,7 @@
 #define GRAVE_ESC_CTRL_OVERRIDE
 
 // configure tap hold (tap dance, mod tap)
-#define IGNORE_MOD_TAP_INTERRUPT_PER_KEY
+#define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
 #define TAPPING_TERM_PER_KEY
 
 // configure caps word
