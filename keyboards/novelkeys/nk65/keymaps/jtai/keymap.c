@@ -118,3 +118,23 @@ bool led_update_user(led_t led_state) {
     // prevent kb version from running
     return false;
 }
+
+// Activate red LED when layer 2 (the default) or 3 (custom) are toggled
+layer_state_t layer_state_set_user(layer_state_t state) {
+    uint8_t R = 0;
+    uint8_t G = 0;
+    uint8_t B = 0;
+    if (state & (1UL << 1)) {
+        R = 255;
+        B = 255;
+    }
+    if (state & (1UL << 2)) {
+        G = 255;
+    }
+    if (state & (1UL << 3)) {
+        G = 255;
+    }
+
+    IS31FL3733_set_color( 6+64-1, R, G, B );
+  return state;
+}
