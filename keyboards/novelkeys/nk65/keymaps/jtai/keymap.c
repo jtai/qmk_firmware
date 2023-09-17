@@ -81,7 +81,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 
     if (keycode == QK_BOOT) {
-        IS31FL3733_set_color( 6+64-1, 0, 255, 0 );
+        is31fl3733_set_color( 6+64-1, 0, 255, 0 );
         backlight_update_pwm_buffers();
         return true;
     }
@@ -92,13 +92,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // Activate caps lock indicator LED when caps word is active
 void caps_word_set_user(bool active) {
   if (active) {
-    IS31FL3733_set_color( 7+64-1, 0, 255, 0 );
+    is31fl3733_set_color( 7+64-1, 0, 255, 0 );
   } else {
     led_t led_state = host_keyboard_led_state();
     if (led_state.caps_lock) {
-      IS31FL3733_set_color( 7+64-1, 0, 255, 0 );
+      is31fl3733_set_color( 7+64-1, 0, 255, 0 );
     } else {
-      IS31FL3733_set_color( 7+64-1, 0, 0, 0 );
+      is31fl3733_set_color( 7+64-1, 0, 0, 0 );
     }
   }
 }
@@ -106,12 +106,12 @@ void caps_word_set_user(bool active) {
 // Ensure host LED update is aware of caps word
 bool led_update_user(led_t led_state) {
     if (led_state.caps_lock) {
-        IS31FL3733_set_color( 7+64-1, 0, 255, 0 );
+        is31fl3733_set_color( 7+64-1, 0, 255, 0 );
     } else {
         if (is_caps_word_on()) {
-            IS31FL3733_set_color( 7+64-1, 0, 255, 0 );
+            is31fl3733_set_color( 7+64-1, 0, 255, 0 );
         } else {
-            IS31FL3733_set_color( 7+64-1, 0, 0, 0 );
+            is31fl3733_set_color( 7+64-1, 0, 0, 0 );
         }
     }
 
@@ -135,6 +135,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         G = 255;
     }
 
-    IS31FL3733_set_color( 6+64-1, R, G, B );
+    is31fl3733_set_color( 6+64-1, R, G, B );
   return state;
 }
