@@ -22,13 +22,9 @@ enum layers {
     _FN
 };
 
-enum tap_dances {
-    TD_ENC,
-};
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASE] = LAYOUT_ansi_67(
-        QK_GESC, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS,  KC_EQL,   KC_BSPC,          TD(TD_ENC),
+        QK_GESC, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS,  KC_EQL,   KC_BSPC,          LT(0, KC_MPLY),
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC,  KC_RBRC,  KC_BSLS,          KC_PGUP,
         KC_CAPS, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,            KC_ENT,           KC_PGDN,
         KC_LSFT,          KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,            KC_RSFT, KC_UP,
@@ -57,10 +53,6 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 };
 #endif
 
-tap_dance_action_t tap_dance_actions[] = {
-    [TD_ENC] = ACTION_TAP_DANCE_DOUBLE(KC_MPLY, KC_MNXT)
-};
-
 // Override default win/mac switch behavior, caps lock ("win") becomes hyper ("mac")
 bool dip_switch_update_user(uint8_t index, bool active) {
     if (index == 0) {
@@ -79,23 +71,34 @@ bool dip_switch_update_user(uint8_t index, bool active) {
 static bool grave_esc_was_shifted = false;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // Adapted from quantum/process_keycode/process_grave_esc.c, except consider QK_GRAVE_ESCAPE shifted if
-    // ALT is pressed (instead of GUI) to accommodate a physical Windows-style keyboard layout (CTRL, GUI, ALT)
-    // with GUI and ALT swapped in macOS.
-    if (keycode == QK_GRAVE_ESCAPE) {
-        const uint8_t mods = get_mods();
-        uint8_t shifted = mods & MOD_MASK_SA;
+    switch (keycode) {
+        // Adapted from quantum/process_keycode/process_grave_esc.c, except consider QK_GRAVE_ESCAPE shifted if
+        // ALT is pressed (instead of GUI) to accommodate a physical Windows-style keyboard layout (CTRL, GUI, ALT)
+        // with GUI and ALT swapped in macOS.
+        case QK_GRAVE_ESCAPE:
+            const uint8_t mods = get_mods();
+            uint8_t shifted = mods & MOD_MASK_SA;
 
-        if (record->event.pressed) {
-            grave_esc_was_shifted = shifted;
-            add_key(shifted ? KC_GRAVE : KC_ESCAPE);
-        } else {
-            del_key(grave_esc_was_shifted ? KC_GRAVE : KC_ESCAPE);
-        }
+            if (record->event.pressed) {
+                grave_esc_was_shifted = shifted;
+                add_key(shifted ? KC_GRAVE : KC_ESCAPE);
+            } else {
+                del_key(grave_esc_was_shifted ? KC_GRAVE : KC_ESCAPE);
+            }
 
-        send_keyboard_report();
-        caps_word_off();
-        return false;
+            send_keyboard_report();
+            caps_word_off();
+            return false;
+            break;
+
+        // Send media next when encoder is held
+        case LT(0, KC_MPLY):
+            if (!record->tap.count && record->event.pressed) {
+                tap_code(KC_MNXT);
+                return false;
+            }
+            return true; // Return true for normal processing of tap keycode
+            break;
     }
 
     return true;
