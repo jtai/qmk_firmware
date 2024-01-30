@@ -104,8 +104,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // Activate caps lock indicator LED when caps word is active
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (is_caps_word_on()) {
-        RGB_MATRIX_INDICATOR_SET_COLOR(CAPS_LOCK_LED_INDEX, 255, 255, 255);
-        return false;
+        RGB_MATRIX_INDICATOR_SET_COLOR(CAPS_WORD_LED_INDEX_1, 255, 255, 255);
+        RGB_MATRIX_INDICATOR_SET_COLOR(CAPS_WORD_LED_INDEX_2, 255, 255, 255);
+    } else {
+        if (!rgb_matrix_get_flags()) {
+            RGB_MATRIX_INDICATOR_SET_COLOR(CAPS_WORD_LED_INDEX_1, 0, 0, 0);
+            RGB_MATRIX_INDICATOR_SET_COLOR(CAPS_WORD_LED_INDEX_2, 0, 0, 0);
+        }
     }
     return true;
 }
