@@ -22,6 +22,10 @@ enum layers {
     _FN
 };
 
+enum keycodes {
+    MACRO1 = SAFE_RANGE
+};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASE] = LAYOUT_ansi_67(
         QK_GESC, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS,  KC_EQL,   KC_BSPC,          LT(0, KC_MPLY),
@@ -41,7 +45,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,   KC_F12,   KC_DEL,           KC_MUTE,
         RGB_TOG, RGB_MOD, RGB_VAI, RGB_HUI, RGB_SAI, RGB_SPI, _______, _______, _______, _______, _______, _______,  _______,  _______,          KC_HOME,
         KC_CAPS, RGB_RMOD,RGB_VAD, RGB_HUD, RGB_SAD, RGB_SPD, _______, _______, _______, _______, _______, _______,            _______,          KC_END,
-        _______,          _______, _______, _______, _______, _______, NK_TOGG, _______, _______, _______, _______,            _______, _______,
+        _______,          _______, _______, _______, _______, _______, NK_TOGG, MACRO1,  _______, _______, _______,            _______, _______,
         _______, _______, _______,                            _______,                            _______, _______,  _______,  _______, _______, _______)
 };
 
@@ -66,9 +70,10 @@ bool dip_switch_update_user(uint8_t index, bool active) {
     return true;
 }
 
-// true if the last press of QK_GRAVE_ESCAPE was shifted (i.e. ALT or SHIFT were pressed), false otherwise.
-// Used to ensure that the correct keycode is released if the key is released.
-static bool grave_esc_was_shifted = false;
+uint32_t macro1_deferred_callback(uint32_t trigger_time, void *cb_arg) {
+    tap_code(KC_LCTL);
+    return 1000;
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
@@ -79,6 +84,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             const uint8_t mods = get_mods();
             uint8_t shifted = mods & MOD_MASK_SA;
 
+            // true if the last press of QK_GRAVE_ESCAPE was shifted (i.e. ALT or SHIFT were pressed), false otherwise.
+            // Used to ensure that the correct keycode is released if the key is released.
+            static bool grave_esc_was_shifted = false;
+
             if (record->event.pressed) {
                 grave_esc_was_shifted = shifted;
                 add_key(shifted ? KC_GRAVE : KC_ESCAPE);
@@ -88,7 +97,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
             send_keyboard_report();
             caps_word_off();
-            return false;
+            return false; // Skip all further processing of this key
             break;
 
         // Send media next when encoder is held
@@ -99,9 +108,28 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return true; // Return true for normal processing of tap keycode
             break;
-    }
 
-    return true;
+        // When toggled, hold down mouse button 1 and tap Control every second to prevent idle
+        case MACRO1:
+            if (record->event.pressed) {
+                static bool macro1_toggle = false;
+                static deferred_token macro1_deferred_token;
+
+                macro1_toggle = !macro1_toggle;
+                if (macro1_toggle) {
+                    register_code(QK_MOUSE_BUTTON_1);
+                    macro1_deferred_token = defer_exec(1000, macro1_deferred_callback, NULL);
+                } else {
+                    unregister_code(QK_MOUSE_BUTTON_1);
+                    cancel_deferred_exec(macro1_deferred_token);
+                }
+            }
+            return false; // Skip all further processing of this key
+            break;
+
+        default:
+            return true; // Process all other keycodes normally
+    }
 }
 
 // Activate caps lock indicator LED when caps word is active
