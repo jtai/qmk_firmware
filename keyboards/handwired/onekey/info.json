@@ -9,10 +9,9 @@
     "diode_direction": "COL2ROW",
     "features": {
         "bootmagic": false,
-        "mousekey": true,
+        "mousekey": false,
         "extrakey": true,
-        "nkro": false,
-        "deferred_exec": true
+        "nkro": false
     },
     "qmk": {
         "locking": {
