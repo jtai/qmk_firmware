@@ -1,0 +1,36 @@
+{
+    "manufacturer": "Jon Tai",
+    "keyboard_name": "minecraftminer",
+    "maintainer": "jtai",
+    "features": {
+        "bootmagic": true,
+        "command": false,
+        "console": false,
+        "extrakey": true,
+        "mousekey": true,
+        "nkro": false,
+        "deferred_exec": true
+    },
+    "development_board": "blackpill_f401",
+    "url": "https://github.com/jtai/qmk_firmware",
+    "usb": {
+        "device_version": "0.0.1",
+        "pid": "0x6465",
+        "vid": "0xFEED"
+    },
+    "matrix_pins": {
+        "direct": [
+            ["B1", "B10", "A8", "B15"]
+        ]
+    },
+    "layouts": {
+        "LAYOUT_ortho_1x4": {
+            "layout": [
+                {"matrix": [0, 0], "x": 0, "y": 0},
+                {"matrix": [0, 1], "x": 1, "y": 0},
+                {"matrix": [0, 2], "x": 2, "y": 0},
+                {"matrix": [0, 3], "x": 3, "y": 0}
+            ]
+        }
+    }
+}
