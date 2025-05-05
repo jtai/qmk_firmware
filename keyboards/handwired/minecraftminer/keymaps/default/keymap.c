@@ -23,9 +23,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         mouse_toggle[index] = !mouse_toggle[index];
         if (mouse_toggle[index]) {
           register_code(keycode);
+          gpio_write_pin_high(keycode == MS_BTN1 ? LED1 : LED2);
           mouse_token[index] = defer_exec(60000, mouse_deferred_callback, NULL);
         } else {
           unregister_code(keycode);
+          gpio_write_pin_low(keycode == MS_BTN1 ? LED1 : LED2);
           cancel_deferred_exec(mouse_token[index]);
         }
       }
