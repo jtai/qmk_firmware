@@ -2,33 +2,31 @@
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_ortho_1x4(
-        KC_A, KC_B, KC_C, KC_D
+        MS_BTN1, MS_BTN2, _______, _______
     )
 };
 
-// tap CTRL once a minute to prevent idle
-uint32_t deferred_callback(uint32_t trigger_time, void *cb_arg) {
+uint32_t mouse_deferred_callback(uint32_t trigger_time, void *cb_arg) {
     tap_code(KC_LCTL);
     return 60000;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  static bool enable[] = {false, false};
-  static deferred_token token[2];
-  static uint16_t buttons[] = {QK_MOUSE_BUTTON_1, QK_MOUSE_BUTTON_2};
-
   switch (keycode) {
-    case KC_A:
-    case KC_B:
-      uint16_t index = keycode - KC_A;
+    case MS_BTN1:
+    case MS_BTN2:
+      static bool mouse_toggle[] = {false, false};
+      static deferred_token mouse_token[2];
+
       if (record->event.pressed) {
-        enable[index] = !enable[index];
-        if (enable[index]) {
-          register_code(buttons[index]);
-          token[index] = defer_exec(60000, deferred_callback, NULL);
+        unsigned char index = keycode - MS_BTN1;
+        mouse_toggle[index] = !mouse_toggle[index];
+        if (mouse_toggle[index]) {
+          register_code(keycode);
+          mouse_token[index] = defer_exec(60000, mouse_deferred_callback, NULL);
         } else {
-          unregister_code(buttons[index]);
-          cancel_deferred_exec(token[index]);
+          unregister_code(keycode);
+          cancel_deferred_exec(mouse_token[index]);
         }
       }
       return false; // Skip all further processing of this key
