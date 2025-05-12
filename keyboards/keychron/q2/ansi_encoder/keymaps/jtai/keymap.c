@@ -66,6 +66,8 @@ bool dip_switch_update_user(uint8_t index, bool active) {
     return true;
 }
 
+bool mouse_toggle[] = {false, false};
+
 uint32_t mouse_deferred_callback(uint32_t trigger_time, void *cb_arg) {
     tap_code(KC_LCTL);
     return 60000;
@@ -108,7 +110,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         // When toggled, hold down mouse button and tap CTRL every minute to prevent idle
         case MS_BTN1:
         case MS_BTN2:
-            static bool mouse_toggle[] = {false, false};
             static deferred_token mouse_token[2];
 
             if (record->event.pressed) {
@@ -130,7 +131,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
-// Activate caps lock indicator LED when caps word is active
+/* LED indicators for caps word and mouse buttons */
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (is_caps_word_on()) {
         RGB_MATRIX_INDICATOR_SET_COLOR(CAPS_WORD_LED_INDEX_1, 255, 255, 255);
@@ -141,5 +142,22 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             RGB_MATRIX_INDICATOR_SET_COLOR(CAPS_WORD_LED_INDEX_2, 0, 0, 0);
         }
     }
+
+    if (mouse_toggle[0]) {
+        RGB_MATRIX_INDICATOR_SET_COLOR(MOUSE_BUTTON_LED_INDEX_1, 255, 255, 255);
+    } else {
+        if (!rgb_matrix_get_flags()) {
+            RGB_MATRIX_INDICATOR_SET_COLOR(MOUSE_BUTTON_LED_INDEX_1, 0, 0, 0);
+        }
+    }
+
+    if (mouse_toggle[1]) {
+        RGB_MATRIX_INDICATOR_SET_COLOR(MOUSE_BUTTON_LED_INDEX_2, 255, 255, 255);
+    } else {
+        if (!rgb_matrix_get_flags()) {
+            RGB_MATRIX_INDICATOR_SET_COLOR(MOUSE_BUTTON_LED_INDEX_2, 0, 0, 0);
+        }
+    }
+
     return true;
 }
