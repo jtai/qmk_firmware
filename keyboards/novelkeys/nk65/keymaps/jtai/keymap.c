@@ -25,11 +25,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,          KC_UP,   KC_PGDN,\
     KC_LCTL, KC_LGUI, KC_LALT,                   KC_SPC,                             KC_RALT, MO(1),   KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT),
 
-[1] = LAYOUT_65_ansi( /* Missing keys, media keys, LED control, board functions */
-    KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,  KC_INS,\
-    _______, H1_DEC,  H1_INC,  S1_DEC,  S1_INC,  _______, _______, _______, _______, _______, TG(3),   EF_DEC,  EF_INC,  QK_BOOT, KC_PSCR,\
-    KC_CAPS, _______, KC_VOLD, KC_VOLU, KC_MPLY, KC_MNXT, _______, _______, _______, _______, _______, _______,          _______, KC_SCRL,\
-    _______, H2_DEC,  H2_INC,  S2_DEC,  S2_INC,  _______, NK_TOGG, TG(2),   _______, _______, _______, _______,          BR_INC,  KC_PAUS,\
+[1] = LAYOUT_65_ansi( /* Missing keys, media keys, LED controls, board functions */
+    KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,  H1_INC, \
+    EF_INC,  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, MS_BTN1, MS_BTN2, _______, H1_DEC, \
+    KC_CAPS, _______, KC_VOLD, KC_VOLU, KC_MPLY, KC_MNXT, _______, _______, _______, _______, _______, _______,          _______, S1_INC, \
+    MO(3),   _______, _______, _______, _______, _______, NK_TOGG, TG(2),   _______, _______, _______, MO(3),            BR_INC,  S1_DEC, \
     _______, _______, _______,                   _______,                            _______, _______, _______, ES_DEC,  BR_DEC,  ES_INC),
 
 [2] = LAYOUT_65_ansi( /* Restore caps lock/disable hyper */
@@ -39,54 +39,83 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______,\
     _______, _______, _______,                   _______,                            _______, _______, _______, _______, _______, _______),
 
-[3] = LAYOUT_65_ansi( /* Photoshop layer */
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, S(A(G(KC_Y))),\
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, A(KC_0),\
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, A(KC_EQL),\
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, A(KC_MINS),\
+[3] = LAYOUT_65_ansi( /* More LED controls */
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, H2_INC, \
+    EF_DEC,  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, H2_DEC, \
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, S2_INC, \
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, S2_DEC, \
+    _______, _______, _______,                   _______,                            _______, _______, _______, _______, _______, _______),
+
+[4] = LAYOUT_65_ansi( /* Dummy layer to signal layer state LED */
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,\
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,\
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______,\
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______,\
+    _______, _______, _______,                   _______,                            _______, _______, _______, _______, _______, _______),
+
+[5] = LAYOUT_65_ansi( /* Dummy layer to signal layer state LED */
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,\
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,\
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______,\
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______,\
     _______, _______, _______,                   _______,                            _______, _______, _______, _______, _______, _______),
 };
 
-enum combos {
-    DF_ESC,
-};
+bool mouse_toggle[] = {false, false};
 
-const uint16_t PROGMEM df_combo[] = {KC_D, KC_F, COMBO_END};
-
-combo_t key_combos[COMBO_COUNT] = {
-    [DF_ESC] = COMBO(df_combo, KC_ESC),
-};
-
-// true if the last press of QK_GRAVE_ESCAPE was shifted (i.e. ALT or SHIFT were pressed), false otherwise.
-// Used to ensure that the correct keycode is released if the key is released.
-static bool grave_esc_was_shifted = false;
+uint32_t mouse_deferred_callback(uint32_t trigger_time, void *cb_arg) {
+    tap_code(KC_LCTL);
+    return 60000;
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // Adapted from quantum/process_keycode/process_grave_esc.c, except consider QK_GRAVE_ESCAPE shifted if
-    // ALT is pressed (instead of GUI) to accommodate a physical Windows-style keyboard layout (CTRL, GUI, ALT)
-    // with GUI and ALT swapped in macOS.
-    if (keycode == QK_GRAVE_ESCAPE) {
-        const uint8_t mods = get_mods();
-        uint8_t shifted = mods & MOD_MASK_SA;
+    switch (keycode) {
+        // Adapted from quantum/process_keycode/process_grave_esc.c, except consider QK_GRAVE_ESCAPE shifted if
+        // ALT is pressed (instead of GUI) to accommodate a physical Windows-style keyboard layout (CTRL, GUI, ALT)
+        // with GUI and ALT swapped in macOS.
+        case QK_GRAVE_ESCAPE:
+            const uint8_t mods = get_mods();
+            uint8_t shifted = mods & MOD_MASK_SA;
 
-        if (record->event.pressed) {
-            grave_esc_was_shifted = shifted;
-            add_key(shifted ? KC_GRAVE : KC_ESCAPE);
-        } else {
-            del_key(grave_esc_was_shifted ? KC_GRAVE : KC_ESCAPE);
-        }
-        send_keyboard_report();
-        caps_word_off();
-        return false;
+            // true if the last press of QK_GRAVE_ESCAPE was shifted (i.e. ALT or SHIFT were pressed), false otherwise.
+            // Used to ensure that the correct keycode is released if the key is released.
+            static bool grave_esc_was_shifted = false;
+
+            if (record->event.pressed) {
+                grave_esc_was_shifted = shifted;
+                add_key(shifted ? KC_GRAVE : KC_ESCAPE);
+            } else {
+                del_key(grave_esc_was_shifted ? KC_GRAVE : KC_ESCAPE);
+            }
+            send_keyboard_report();
+            caps_word_off();
+            return false; // Skip all further processing of this key
+            break;
+
+        // When toggled, hold down mouse button and tap CTRL every minute to prevent idle
+        case MS_BTN1:
+        case MS_BTN2:
+            static deferred_token mouse_token[2];
+
+            if (record->event.pressed) {
+                unsigned char index = keycode - MS_BTN1;
+                mouse_toggle[index] = !mouse_toggle[index];
+                if (mouse_toggle[index]) {
+                    register_code(keycode);
+                    mouse_token[index] = defer_exec(60000, mouse_deferred_callback, NULL);
+                    layer_on(4+index);
+                } else {
+                    unregister_code(keycode);
+                    cancel_deferred_exec(mouse_token[index]);
+                    layer_off(4+index);
+                }
+            }
+            return false; // Skip all further processing of this key
+            break;
+
+        default:
+            return true; // Process all other keycodes normally
     }
-
-    if (keycode == QK_BOOT) {
-        is31fl3733_set_color( 6+64-1, 0, 255, 0 );
-        backlight_update_pwm_buffers();
-        return true;
-    }
-
-    return true;
 }
 
 // Activate caps lock indicator LED when caps word is active
@@ -94,12 +123,7 @@ void caps_word_set_user(bool active) {
   if (active) {
     is31fl3733_set_color( 7+64-1, 0, 255, 0 );
   } else {
-    led_t led_state = host_keyboard_led_state();
-    if (led_state.caps_lock) {
-      is31fl3733_set_color( 7+64-1, 0, 255, 0 );
-    } else {
-      is31fl3733_set_color( 7+64-1, 0, 0, 0 );
-    }
+    led_update_ports(host_keyboard_led_state());
   }
 }
 
@@ -119,7 +143,7 @@ bool led_update_user(led_t led_state) {
     return false;
 }
 
-// Activate red LED when layer 2 (the default) or 3 (custom) are toggled
+// Activate red LED when a layer >= layer 2 are toggled
 layer_state_t layer_state_set_user(layer_state_t state) {
     uint8_t R = 0;
     uint8_t G = 0;
@@ -128,10 +152,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         R = 255;
         B = 255;
     }
-    if (state & (1UL << 2)) {
-        G = 255;
-    }
-    if (state & (1UL << 3)) {
+    if (state >> 2) {
         G = 255;
     }
 
