@@ -1,11 +1,17 @@
 [
   {
+    "backcolor": "#000000",
     "name": "NK65"
   },
   [
     {
-      "c": "#393b3b",
-      "t": "#ffffff\n\n\n#d02f1c",
+      "c": "#33333d",
+      "t": "#6e9592\n\n\n#516e6b"
+    },
+    "\n\n\n`\n\n\nEsc",
+    {
+      "c": "#464a56",
+      "t": "#ffffff\n\n\n#858585",
       "fa": [
         0,
         0,
@@ -13,7 +19,6 @@
         2
       ]
     },
-    "~\nEsc\n\n`",
     "!\n1\n\nF1",
     "@\n2\n\nF2",
     "#\n3\n\nF3",
@@ -27,44 +32,40 @@
     "_\n-\n\nF11",
     "+\n=\n\nF12",
     {
+      "c": "#33333d",
+      "t": "#6e9592\n\n\n#516e6b",
       "w": 2
     },
     "\n\n\nDelete\n\n\nBackspace",
     {
-      "t": "#ffffff\n\n#17e8e8\n#d02f1c",
       "fa": [
         0,
         0,
-        1,
-        2
-      ]
-    },
-    "\n\nQ. Export\nInsert\n\n\nHome"
-  ],
-  [
-    {
-      "t": "#ffffff",
-      "a": 6,
-      "w": 1.5
-    },
-    "Tab",
-    {
-      "t": "#ffffff\n\n\n#d02f1c",
-      "a": 4,
-      "fa": [
         0,
-        0,
-        1,
         1
       ]
     },
-    "Q\n\n\nHue1-",
-    "W\n\n\nHue1+",
-    "E\n\n\nSat1-",
-    "R\n\n\nSat1+",
+    "\n\n\nHue+\n\n\nHome"
+  ],
+  [
     {
+      "fa": [
+        0,
+        0,
+        0,
+        2
+      ],
+      "w": 1.5
+    },
+    "\n\n\nEffect+\n\n\nTab",
+    {
+      "c": "#464a56",
       "t": "#ffffff"
     },
+    "Q",
+    "W",
+    "E",
+    "R",
     "T",
     "Y",
     "U",
@@ -73,85 +74,71 @@
     {
       "t": "#ffffff\n\n\n#d02f1c"
     },
-    "P\n\n\nPS_TOGG",
-    "{\n[\n\nEffect-",
-    "}\n]\n\nEffect+",
+    "P",
     {
-      "w": 1.5
-    },
-    "|\n\\\n\nQK_BOOT",
-    {
-      "t": "#ffffff\n\n#17e8e8\n#d02f1c",
+      "t": "#ffffff\n\n\n#858585",
       "fa": [
         0,
         0,
-        1,
-        2
+        0,
+        1
       ]
     },
-    "\n\nZoom Fit\nPrtSc\n\n\nEnd"
+    "{\n[\n\nMouse 1",
+    "}\n]\n\nMouse 2",
+    {
+      "t": "#ffffff",
+      "w": 1.5
+    },
+    "|\n\\",
+    {
+      "c": "#33333d",
+      "t": "#6e9592\n\n\n#516e6b"
+    },
+    "\n\n\nHue-\n\n\nEnd"
   ],
   [
     {
-      "t": "#ffffff\n\n\n#d02f1c",
       "fa": [
         0,
         0,
-        1,
-        1
+        0,
+        2
       ],
       "w": 1.75
     },
     "\n\n\nCaps Lock\n\n\nHyper",
     {
+      "c": "#464a56",
       "t": "#ffffff"
     },
     "A",
     {
-      "t": "#ffffff\n\n\n#d02f1c",
       "f": 3
     },
     "S\n\n\n<i class='fa fa-volume-down'></i>",
     {
-      "t": "#ffffff\n\n\n#d02f1c\n\n\n\n#0cba00",
+      "f": 3
+    },
+    "D\n\n\n<i class='fa fa-volume-up'></i>",
+    {
       "fa": [
-        0,
-        0,
-        1,
-        0,
         0,
         0,
         0,
         1
       ]
     },
-    "D\n\n\n<i class='fa fa-volume-up'></i>\n\n\n\nEsc",
+    "F\n\n\n<i class='fa fa-play'></i><i class='fa fa-pause'></i>",
     {
       "fa": [
         0,
         0,
-        1,
-        1,
         0,
-        0,
-        0,
-        1
-      ]
-    },
-    "F\n\n\n<i class='fa fa-play'></i><i class='fa fa-pause'></i>\n\n\n\nEsc",
-    {
-      "t": "#ffffff\n\n\n#d02f1c",
-      "fa": [
-        0,
-        0,
-        1,
         2
       ]
     },
     "G\n\n\n<i class='fa fa-forward'></i>",
-    {
-      "t": "#ffffff"
-    },
     "H",
     "J",
     "K",
@@ -159,44 +146,56 @@
     ":\n;",
     "\"\n'",
     {
+      "c": "#33333d",
+      "t": "#6e9592",
       "a": 6,
       "w": 2.25
     },
     "Enter",
     {
-      "t": "#ffffff\n\n#17e8e8\n#d02f1c",
-      "a": 4
-    },
-    "\n\nZoom+\nScroll\n\n\nPgUp"
-  ],
-  [
-    {
-      "t": "#ffffff\n\n#0060f2",
-      "w": 2.25
-    },
-    "\n\nCaps Word\n\n\n\nShift",
-    {
-      "t": "#ffffff\n\n\n#d02f1c",
+      "t": "#6e9592\n\n\n#516e6b",
+      "a": 4,
       "fa": [
         0,
         0,
-        1,
+        0,
         1
       ]
     },
-    "Z\n\n\nHue2-",
-    "X\n\n\nHue2+",
-    "C\n\n\nSat2-",
-    "V\n\n\nSat2+",
+    "\n\n\nSat+\n\n\nPgUp"
+  ],
+  [
     {
+      "t": "#6e9592\n\n\n#545463",
+      "fa": [
+        0,
+        0,
+        0,
+        2
+      ],
+      "w": 2.25
+    },
+    "\n\n\nCaps Word\n\n\nShift",
+    {
+      "c": "#464a56",
       "t": "#ffffff"
     },
+    "Z",
+    "X",
+    "C",
+    "V",
     "B",
     {
-      "t": "#ffffff\n\n\n#d02f1c"
+      "t": "#ffffff\n\n\n#858585",
+      "fa": [
+        0,
+        0,
+        0,
+        1
+      ]
     },
-    "N\n\n\nNK_TOGG",
-    "M\n\n\nCAPS_TG",
+    "N\n\n\nN-Key Rollover",
+    "M\n\n\nHyper / CapsLock",
     {
       "t": "#ffffff"
     },
@@ -204,73 +203,77 @@
     ">\n.",
     "?\n/",
     {
-      "t": "#ffffff\n\n#0060f2",
+      "c": "#33333d",
+      "t": "#6e9592\n\n\n#545463",
+      "fa": [
+        0,
+        0,
+        0,
+        2
+      ],
       "w": 1.75
     },
-    "\n\nCaps Word\n\n\n\nShift",
+    "\n\n\nCaps Word\n\n\nShift",
     {
-      "t": "#ffffff\n\n\n#d02f1c",
+      "t": "#6e9592\n\n\n#516e6b",
       "f": 7,
       "fa": [
         0,
         0,
-        1,
+        0,
         1
       ]
     },
     "\n\n\nBright+\n\n\n↑",
     {
-      "t": "#ffffff\n\n#17e8e8\n#d02f1c",
       "f": 3,
       "fa": [
         0,
         0,
-        1,
-        2
+        0,
+        1
       ]
     },
-    "\n\nZoom-\nPause\n\n\nPgDn"
+    "\n\n\nSat-\n\n\nPgDn"
   ],
   [
     {
-      "t": "#ffffff",
+      "t": "#6e9592",
       "a": 6,
       "w": 1.25
     },
-    "Ctrl",
+    "Control",
     {
       "w": 1.25
     },
-    "Win",
+    "Super",
     {
       "w": 1.25
     },
     "Alt",
     {
+      "c": "#464a56",
+      "t": "#ffffff",
       "a": 7,
       "w": 6.25
     },
     "",
     {
+      "c": "#33333d",
+      "t": "#6e9592",
       "a": 6
     },
     "Alt",
-    {
-      "t": "#d02f1c"
-    },
     "Fn",
-    {
-      "t": "#ffffff"
-    },
     "Ctrl",
     {
-      "t": "#ffffff\n\n\n#d02f1c",
+      "t": "#6e9592\n\n\n#516e6b",
       "a": 4,
       "f": 7,
       "fa": [
         0,
         0,
-        1,
+        0,
         1
       ]
     },
