@@ -39,7 +39,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_FN] = LAYOUT_ansi_67(
         KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,   KC_F12,   KC_DEL,           KC_MUTE,
-        RM_TOGG, RM_NEXT, RM_VALU, RM_HUEU, RM_SATU, RM_SPDU, _______, _______, _______, _______, _______, MS_BTN1,  MS_BTN2,  _______,          KC_HOME,
+        RM_TOGG, RM_NEXT, RM_VALU, RM_HUEU, RM_SATU, RM_SPDU, _______, _______, _______, _______, _______, LT(0, MS_BTN1), LT(0, MS_BTN2), _______,          KC_HOME,
         KC_CAPS, RM_PREV, RM_VALD, RM_HUED, RM_SATD, RM_SPDD, _______, _______, _______, _______, _______, _______,            _______,          KC_END,
         _______,          _______, _______, _______, _______, _______, NK_TOGG, _______, _______, _______, _______,            _______, _______,
         _______, _______, _______,                            _______,                            _______, _______,  _______,  _______, _______, _______)
@@ -66,11 +66,23 @@ bool dip_switch_update_user(uint8_t index, bool active) {
     return true;
 }
 
-bool mouse_toggle[] = {false, false};
+typedef struct mouse_key_deferred_data {
+    uint16_t keycode;
+    uint32_t delay;
+} mouse_key_deferred_data;
 
-uint32_t mouse_deferred_callback(uint32_t trigger_time, void *cb_arg) {
-    tap_code(KC_LCTL);
-    return 60000;
+typedef struct mouse_key_state {
+    bool toggled;
+    mouse_key_deferred_data data;
+    deferred_token token;
+} mouse_key_state;
+
+static mouse_key_state mouse_key_states[2];
+
+uint32_t mouse_key_deferred_callback(uint32_t trigger_time, void *cb_arg) {
+    mouse_key_deferred_data* data = (mouse_key_deferred_data*)cb_arg;
+    tap_code_delay(data->keycode, 50);
+    return data->delay;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -108,19 +120,26 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
 
         // When toggled, hold down mouse button and tap CTRL every minute to prevent idle
-        case MS_BTN1:
-        case MS_BTN2:
-            static deferred_token mouse_token[2];
-
+        case LT(0, MS_BTN1):
+        case LT(0, MS_BTN2):
             if (record->event.pressed) {
-                unsigned char index = keycode - MS_BTN1;
-                mouse_toggle[index] = !mouse_toggle[index];
-                if (mouse_toggle[index]) {
-                    register_code(keycode);
-                    mouse_token[index] = defer_exec(60000, mouse_deferred_callback, NULL);
+                unsigned char index = keycode - LT(0, MS_BTN1); // Assumes keycodes are adjacent
+                mouse_key_state* state = &mouse_key_states[index];
+                uint16_t tap_keycode = QK_LAYER_TAP_GET_TAP_KEYCODE(keycode);
+
+                state->toggled = !state->toggled;
+                if (state->toggled) {
+                    if (record->tap.count) {
+                        state->data = (mouse_key_deferred_data) {tap_keycode, 1000};
+                        state->token = defer_exec(1, mouse_key_deferred_callback, &state->data);
+                    } else {
+                        register_code(tap_keycode);
+                        state->data = (mouse_key_deferred_data) {KC_LCTL, 60000};
+                        state->token = defer_exec(60000, mouse_key_deferred_callback, &state->data);
+                    }
                 } else {
-                    unregister_code(keycode);
-                    cancel_deferred_exec(mouse_token[index]);
+                    unregister_code(tap_keycode);
+                    cancel_deferred_exec(state->token);
                 }
             }
             return false; // Skip all further processing of this key
@@ -143,7 +162,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         }
     }
 
-    if (mouse_toggle[0]) {
+    if (mouse_key_states[0].toggled) {
         RGB_MATRIX_INDICATOR_SET_COLOR(MOUSE_BUTTON_LED_INDEX_1, 255, 255, 255);
     } else {
         if (!rgb_matrix_get_flags()) {
@@ -151,7 +170,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         }
     }
 
-    if (mouse_toggle[1]) {
+    if (mouse_key_states[1].toggled) {
         RGB_MATRIX_INDICATOR_SET_COLOR(MOUSE_BUTTON_LED_INDEX_2, 255, 255, 255);
     } else {
         if (!rgb_matrix_get_flags()) {
