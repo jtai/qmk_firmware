@@ -1,2 +1,1 @@
-#define TAPPING_TERM 500
-#define TAP_CODE_DELAY 100
+#define TAPPING_TERM 300
