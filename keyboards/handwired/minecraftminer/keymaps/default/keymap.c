@@ -6,45 +6,57 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     )
 };
 
-uint16_t mouse_buttons[] = {MS_BTN1, MS_BTN2};
-const uint32_t mouse_leds[] = {LED1, LED2};
+typedef struct mouse_key_deferred_data {
+  uint16_t keycode;
+  uint32_t led;
+  uint32_t delay;
+} mouse_key_deferred_data;
 
-uint32_t mouse_tap_deferred_callback(uint32_t trigger_time, void *cb_arg) {
-    uint16_t keycode = *(uint16_t*)cb_arg;
-    unsigned char index = keycode - MS_BTN1;
-    gpio_write_pin_high(mouse_leds[index]);
-    tap_code(keycode);
-    gpio_write_pin_low(mouse_leds[index]);
-    return 1000;
-}
+typedef struct mouse_key_state {
+  bool toggled;
+  mouse_key_deferred_data data;
+  deferred_token token;
+} mouse_key_state;
 
-uint32_t mouse_hold_deferred_callback(uint32_t trigger_time, void *cb_arg) {
-    tap_code(KC_LCTL);
-    return 60000;
+uint32_t mouse_key_deferred_callback(uint32_t trigger_time, void *cb_arg) {
+    mouse_key_deferred_data* data = (mouse_key_deferred_data*)cb_arg;
+    if (data->led) {
+      gpio_write_pin_high(data->led);
+    }
+    tap_code(data->keycode);
+    if (data->led) {
+      gpio_write_pin_low(data->led);
+    }
+    return data->delay;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case LT(0, MS_BTN1):
     case LT(0, MS_BTN2):
-      static bool mouse_toggle[] = {false, false};
-      static deferred_token mouse_token[2];
-
       if (record->event.pressed) {
-        unsigned char index = keycode - LT(0, MS_BTN1);
-        mouse_toggle[index] = !mouse_toggle[index];
-        if (mouse_toggle[index]) {
+        static mouse_key_state mouse_key_states[2];
+
+        unsigned char index = keycode - LT(0, MS_BTN1); // Assumes keycodes are adjacent
+        mouse_key_state* state = &mouse_key_states[index];
+        uint16_t tap_keycode = QK_LAYER_TAP_GET_TAP_KEYCODE(keycode);
+        uint32_t led = index == 0 ? LED1 : LED2;
+
+        state->toggled = !state->toggled;
+        if (state->toggled) {
           if (record->tap.count) {
-            mouse_token[index] = defer_exec(1, mouse_tap_deferred_callback, &mouse_buttons[index]);
+            state->data = (mouse_key_deferred_data) {tap_keycode, led, 1000};
+            state->token = defer_exec(1, mouse_key_deferred_callback, &state->data);
           } else {
-            register_code(mouse_buttons[index]);
-            gpio_write_pin_high(mouse_leds[index]);
-            mouse_token[index] = defer_exec(60000, mouse_hold_deferred_callback, NULL);
+            register_code(tap_keycode);
+            gpio_write_pin_high(led);
+            state->data = (mouse_key_deferred_data) {KC_LCTL, 0, 60000};
+            state->token = defer_exec(60000, mouse_key_deferred_callback, &state->data);
           }
         } else {
-          unregister_code(mouse_buttons[index]);
-          gpio_write_pin_low(mouse_leds[index]);
-          cancel_deferred_exec(mouse_token[index]);
+          unregister_code(tap_keycode);
+          gpio_write_pin_low(led);
+          cancel_deferred_exec(state->token);
         }
       }
       return false; // Skip all further processing of this key
