@@ -61,32 +61,31 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, _______,                   _______,                            _______, _______, _______, _______, _______, _______),
 };
 
-typedef struct mouse_key_deferred_data {
-    uint16_t keycode;
-    uint8_t layer;
-    uint32_t delay;
-} mouse_key_deferred_data;
-
 typedef struct mouse_key_state {
     bool toggled;
-    mouse_key_deferred_data data;
+    bool hold;
+    uint16_t keycode;
+    uint32_t delay;
     deferred_token token;
+    uint8_t layer;
 } mouse_key_state;
 
+static mouse_key_state mouse_key_states[2];
+
+uint32_t mouse_key_indicator_deferred_callback(uint32_t trigger_time, void *cb_arg) {
+    mouse_key_state* state = (mouse_key_state*)cb_arg;
+    layer_off(state->layer);
+    return 0;
+}
+
 uint32_t mouse_key_deferred_callback(uint32_t trigger_time, void *cb_arg) {
-    mouse_key_deferred_data* data = (mouse_key_deferred_data*)cb_arg;
-    if (data->layer) {
-        layer_on(data->layer);
-        layer_state_set_user(layer_state);
-        is31fl3733_flush();
+    mouse_key_state* state = (mouse_key_state*)cb_arg;
+    if (!state->hold) {
+        layer_on(state->layer);
+        defer_exec(25, mouse_key_indicator_deferred_callback, state);
     }
-    tap_code_delay(data->keycode, 50);
-    if (data->layer) {
-        layer_off(data->layer);
-        layer_state_set_user(layer_state);
-        is31fl3733_flush();
-    }
-    return data->delay;
+    tap_code(state->keycode);
+    return state->delay;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -117,28 +116,37 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LT(0, MS_BTN1):
         case LT(0, MS_BTN2):
              if (record->event.pressed) {
-                static mouse_key_state mouse_key_states[2];
-
                 unsigned char index = keycode - LT(0, MS_BTN1); // Assumes keycodes are adjacent
                 mouse_key_state* state = &mouse_key_states[index];
+
                 uint16_t tap_keycode = QK_LAYER_TAP_GET_TAP_KEYCODE(keycode);
                 uint8_t layer = 4 + index;
 
                 state->toggled = !state->toggled;
                 if (state->toggled) {
                     if (record->tap.count) {
-                        state->data = (mouse_key_deferred_data) {tap_keycode, layer, 1000};
-                        state->token = defer_exec(1, mouse_key_deferred_callback, &state->data);
+                        state->hold = false;
+                        state->keycode = tap_keycode;
+                        state->layer = layer;
+                        state->delay = 1000;
+                        state->token = defer_exec(1, mouse_key_deferred_callback, state);
                     } else {
+                        state->hold = true;
+                        state->keycode = KC_LCTL;
+                        state->layer = layer; // Not actually used
+                        state->delay = 60000;
+                        state->token = defer_exec(60000, mouse_key_deferred_callback, state);
+
                         register_code(tap_keycode);
                         layer_on(layer);
-                        state->data = (mouse_key_deferred_data) {KC_LCTL, 0, 60000};
-                        state->token = defer_exec(60000, mouse_key_deferred_callback, &state->data);
                     }
                 } else {
-                    unregister_code(tap_keycode);
-                    layer_off(layer);
                     cancel_deferred_exec(state->token);
+
+                    if (state->hold) {
+                        unregister_code(tap_keycode);
+                        layer_off(layer);
+                    }
                 }
             }
             return false; // Skip all further processing of this key
