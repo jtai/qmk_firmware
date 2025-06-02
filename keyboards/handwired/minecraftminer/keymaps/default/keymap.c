@@ -2,7 +2,7 @@
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_ortho_1x4(
-        LT(0, MS_BTN1), LT(0, MS_BTN2), _______, _______
+        LT(0, MS_BTN1), LT(0, MS_BTN2), QK_BOOT, _______
     )
 };
 
