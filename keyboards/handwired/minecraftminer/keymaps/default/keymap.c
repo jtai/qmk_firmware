@@ -23,7 +23,7 @@ uint32_t mouse_key_deferred_callback(uint32_t trigger_time, void *cb_arg) {
     if (data->led) {
       gpio_write_pin_high(data->led);
     }
-    tap_code(data->keycode);
+    tap_code_delay(data->keycode, 50);
     if (data->led) {
       gpio_write_pin_low(data->led);
     }
