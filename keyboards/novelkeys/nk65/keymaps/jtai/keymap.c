@@ -14,8 +14,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-#include "drivers/led/issi/is31fl3733.h"
-#include "keyboards/wilba_tech/wt_rgb_backlight.h"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [0] = LAYOUT_65_ansi( /* Base */
@@ -26,11 +24,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_LCTL, KC_LGUI, KC_LALT,                   KC_SPC,                             KC_RALT, MO(1),   KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT),
 
 [1] = LAYOUT_65_ansi( /* Missing keys, media keys, LED controls, board functions */
-    KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,  H1_INC, \
-    EF_INC,  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, LT(0, MS_BTN1), LT(0, MS_BTN2), _______, H1_DEC, \
-    KC_CAPS, _______, KC_VOLD, KC_VOLU, KC_MPLY, KC_MNXT, _______, _______, _______, _______, _______, _______,          _______, S1_INC, \
-    MO(3),   _______, _______, _______, _______, _______, NK_TOGG, TG(2),   _______, _______, _______, MO(3),            BR_INC,  S1_DEC, \
-    _______, _______, _______,                   _______,                            _______, _______, _______, ES_DEC,  BR_DEC,  ES_INC),
+    KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,  RM_HUEU, \
+    RM_TOGG, RM_NEXT, _______, _______, _______, _______, _______, _______, _______, _______, _______, LT(0, MS_BTN1), LT(0, MS_BTN2), _______, RM_HUED, \
+    KC_CAPS, RM_PREV, KC_VOLD, KC_VOLU, KC_MPLY, KC_MNXT, _______, _______, _______, _______, _______, _______,          _______, RM_SATU, \
+    _______, _______, _______, _______, _______, _______, NK_TOGG, TG(2),   _______, _______, _______, _______,          RM_VALU, RM_SATD, \
+    _______, _______, _______,                   _______,                            _______, _______, _______, RM_SPDD, RM_VALD, RM_SPDU),
 
 [2] = LAYOUT_65_ansi( /* Restore caps lock/disable hyper */
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,\
@@ -39,21 +37,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______,\
     _______, _______, _______,                   _______,                            _______, _______, _______, _______, _______, _______),
 
-[3] = LAYOUT_65_ansi( /* More LED controls */
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, H2_INC, \
-    EF_DEC,  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, H2_DEC, \
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, S2_INC, \
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, S2_DEC, \
+[3] = LAYOUT_65_ansi( /* Dummy layer to signal layer state LED */
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,\
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,\
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______,\
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______,\
     _______, _______, _______,                   _______,                            _______, _______, _______, _______, _______, _______),
 
 [4] = LAYOUT_65_ansi( /* Dummy layer to signal layer state LED */
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,\
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,\
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______,\
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______,\
-    _______, _______, _______,                   _______,                            _______, _______, _______, _______, _______, _______),
-
-[5] = LAYOUT_65_ansi( /* Dummy layer to signal layer state LED */
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,\
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,\
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______,\
@@ -120,7 +111,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 mouse_key_state* state = &mouse_key_states[index];
 
                 uint16_t tap_keycode = QK_LAYER_TAP_GET_TAP_KEYCODE(keycode);
-                uint8_t layer = 4 + index;
+                uint8_t layer = 3 + index;
 
                 state->toggled = !state->toggled;
                 if (state->toggled) {
@@ -157,44 +148,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
-// Activate caps lock indicator LED when caps word is active
-void caps_word_set_user(bool active) {
-    if (active) {
-        is31fl3733_set_color( 7+64-1, 0, 255, 0 );
+bool rgb_matrix_indicators_user(void) {
+    // Activate blue caps lock indicator LED when caps word is active
+    if (host_keyboard_led_state().caps_lock || is_caps_word_on()) {
+        rgb_matrix_set_color(68, RGB_WHITE); //0, 0xFF, 0);
     } else {
-        led_update_ports(host_keyboard_led_state());
-    }
-}
-
-// Ensure host LED update is aware of caps word
-bool led_update_user(led_t led_state) {
-    if (led_state.caps_lock) {
-        is31fl3733_set_color( 7+64-1, 0, 255, 0 );
-    } else {
-        if (is_caps_word_on()) {
-            is31fl3733_set_color( 7+64-1, 0, 255, 0 );
-        } else {
-            is31fl3733_set_color( 7+64-1, 0, 0, 0 );
-        }
+        rgb_matrix_set_color(68, RGB_OFF);
     }
 
-    // prevent kb version from running
-    return false;
-}
-
-// Activate red LED when a layer >= layer 2 are toggled
-layer_state_t layer_state_set_user(layer_state_t state) {
-    uint8_t R = 0;
-    uint8_t G = 0;
-    uint8_t B = 0;
+    layer_state_t state = layer_state|default_layer_state;
     if (state & (1UL << 1)) {
-        R = 255;
-        B = 255;
-    }
-    if (state >> 2) {
-        G = 255;
+        rgb_matrix_set_color(69, RGB_WHITE); // 0xFF, 0, 0xFF);
+    } else {
+        rgb_matrix_set_color(69, RGB_OFF);
     }
 
-    is31fl3733_set_color( 6+64-1, R, G, B );
-    return state;
+    // Activate red indicator LED when a layer >= layer 2 are toggled
+    if (state >> 2) {
+        rgb_matrix_set_color(70, RGB_WHITE); //0, 0xFF, 0);
+    } else {
+        rgb_matrix_set_color(70, RGB_OFF);
+    }
+
+    return false;
 }
