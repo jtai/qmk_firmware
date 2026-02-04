@@ -143,6 +143,28 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false; // Skip all further processing of this key
             break;
 
+        // Enable indicators even if RGB is disabled
+        // This snippet taken from keyboards/keychron/q2/q2.c
+        // See https://www.reddit.com/r/olkb/comments/18gm8fr/rgb_matrix_override_rgb_toggle_for_indicators/
+        case QK_RGB_MATRIX_TOGGLE:
+            if (record->event.pressed) {
+                switch (rgb_matrix_get_flags()) {
+                    case LED_FLAG_ALL: {
+                        rgb_matrix_set_flags(LED_FLAG_NONE);
+                        rgb_matrix_set_color_all(0, 0, 0);
+                    } break;
+                    default: {
+                        rgb_matrix_set_flags(LED_FLAG_ALL);
+                    } break;
+                }
+            }
+            if (!rgb_matrix_is_enabled()) {
+                rgb_matrix_set_flags(LED_FLAG_ALL);
+                rgb_matrix_enable();
+            }
+            return false;
+            break;
+
         default:
             return true; // Process all other keycodes normally
     }
