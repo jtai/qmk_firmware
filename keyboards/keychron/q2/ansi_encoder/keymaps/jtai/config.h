@@ -8,6 +8,3 @@
 /* LEDs for mouse buttons */
 #define MOUSE_BUTTON_LED_INDEX_1 26
 #define MOUSE_BUTTON_LED_INDEX_2 27
-
-/* Increase debounce (default=5) */
-#define DEBOUNCE 7
